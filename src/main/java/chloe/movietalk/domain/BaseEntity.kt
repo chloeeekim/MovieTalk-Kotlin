@@ -1,5 +1,6 @@
 package chloe.movietalk.domain
 
+import chloe.movietalk.common.AllOpen
 import jakarta.persistence.Column
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.MappedSuperclass
@@ -10,6 +11,7 @@ import java.time.LocalDateTime
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
+@AllOpen
 abstract class BaseEntity {
     @CreatedDate
     @Column(updatable = false, name = "created_at")

@@ -3,6 +3,11 @@ plugins {
     id("org.springframework.boot") version "3.4.5"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("jvm")
+    kotlin("plugin.spring") version "2.2.0"
+}
+
+allOpen {
+    annotation("chloe.movietalk.common.AllOpen")
 }
 
 group = "chloe"
@@ -53,6 +58,7 @@ dependencies {
 
     // kotlin stdlib
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
 
 tasks.test {
