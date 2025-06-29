@@ -13,9 +13,9 @@ import java.time.LocalDateTime
 abstract class BaseEntity {
     @CreatedDate
     @Column(updatable = false, name = "created_at")
-    private var createdAt: LocalDateTime? = null
+    lateinit var createdAt: LocalDateTime
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    private var updatedAt: LocalDateTime? = null
+    lateinit var updatedAt: LocalDateTime
 }
