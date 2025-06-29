@@ -1,44 +1,35 @@
-package chloe.movietalk.dto.response.actor;
+package chloe.movietalk.dto.response.actor
 
-import chloe.movietalk.domain.Actor;
-import chloe.movietalk.domain.enums.Gender;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.util.UUID;
+import chloe.movietalk.domain.Actor
+import chloe.movietalk.domain.Person.country
+import chloe.movietalk.domain.Person.gender
+import chloe.movietalk.domain.Person.id
+import chloe.movietalk.domain.Person.name
+import chloe.movietalk.domain.enums.Gender
+import io.swagger.v3.oas.annotations.media.Schema
+import lombok.Builder
+import lombok.Getter
+import lombok.NoArgsConstructor
+import java.util.*
 
 @Getter
 @NoArgsConstructor
-public class ActorInfo {
-
-    @Schema(description = "배우 ID")
-    private UUID id;
-
-    @Schema(description = "배우 이름")
-    private String name;
-
-    @Schema(description = "성별")
-    private Gender gender;
-
-    @Schema(description = "국적")
-    private String country;
-
-    @Builder
-    public ActorInfo(UUID id, String name, Gender gender, String country) {
-        this.id = id;
-        this.name = name;
-        this.gender = gender;
-        this.country = country;
-    }
-
-    public static ActorInfo fromEntity(Actor actor) {
-        return ActorInfo.builder()
-                .id(actor.getId())
-                .name(actor.getName())
-                .gender(actor.getGender())
-                .country(actor.getCountry())
-                .build();
+class ActorInfo @Builder constructor(
+    @field:Schema(description = "배우 ID") private var id: UUID?, @field:Schema(
+        description = "배우 이름"
+    ) private var name: String?, @field:Schema(description = "성별") private var gender: Gender?, @field:Schema(
+        description = "국적"
+    ) private var country: String?
+) {
+    companion object {
+        @JvmStatic
+        fun fromEntity(actor: Actor): ActorInfo? {
+            return ActorInfo.builder()
+                .id(actor.id)
+                .name(actor.name)
+                .gender(actor.gender)
+                .country(actor.country)
+                .build()
+        }
     }
 }
