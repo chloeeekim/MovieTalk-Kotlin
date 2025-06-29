@@ -21,7 +21,7 @@ data class ActorDetailResponse(
     val country: String,
 
     @field:Schema(description = "필모그라피")
-    val filmography: MutableList<MovieInfo> = mutableListOf()
+    val filmography: List<MovieInfo>
 ) {
     companion object {
         @JvmStatic
@@ -31,8 +31,7 @@ data class ActorDetailResponse(
                 name = actor.name,
                 gender = actor.gender,
                 country = actor.country,
-                filmography = actor.getMovies().stream().map<MovieInfo?> { movie: Movie? -> MovieInfo.fromEntity(movie) }
-                    .toList()
+                filmography = actor.getMovies().map { MovieInfo.fromEntity(it) }
             )
         }
     }
