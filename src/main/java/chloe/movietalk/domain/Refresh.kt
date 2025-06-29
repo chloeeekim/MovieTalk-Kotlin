@@ -1,16 +1,15 @@
 package chloe.movietalk.domain
 
-import lombok.*
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.index.Indexed
 import java.util.*
 
-@ToString
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RedisHash(value = "refresh", timeToLive = 1209600) // 2주
-class Refresh @Builder constructor(
-    @field:Id private var userId: UUID?,
-    @field:Indexed private var refreshToken: String?
+@RedisHash(value = "refresh", timeToLive = 60 * 60 * 24 * 14) // 2주
+class Refresh(
+    @Id
+    val userId: UUID,
+
+    @Indexed
+    var refreshToken: String
 )
