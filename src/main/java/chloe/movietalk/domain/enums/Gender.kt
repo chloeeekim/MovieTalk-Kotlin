@@ -1,20 +1,22 @@
-package chloe.movietalk.domain.enums;
+package chloe.movietalk.domain.enums
 
-import chloe.movietalk.exception.global.InvalidGenderEnumValueException;
+import chloe.movietalk.exception.CustomException
+import chloe.movietalk.exception.global.InvalidGenderEnumValueException
+import java.util.*
+import java.util.function.Supplier
 
-import java.util.Arrays;
-
-public enum Gender {
+enum class Gender {
     MALE,
     FEMALE,
     OTHER;
 
-    public static Gender from(String genderStr) {
-        if (genderStr == null)
-            return null;
-        return Arrays.stream(values())
-                .filter(g -> g.name().equals(genderStr))
+    companion object {
+        fun from(genderStr: String?): Gender? {
+            if (genderStr == null) return null
+            return Arrays.stream<Gender?>(entries.toTypedArray())
+                .filter { g: Gender? -> g!!.name == genderStr }
                 .findFirst()
-                .orElseThrow(() -> InvalidGenderEnumValueException.EXCEPTION);
+                .orElseThrow<CustomException?>(Supplier { InvalidGenderEnumValueException.EXCEPTION })
+        }
     }
 }
