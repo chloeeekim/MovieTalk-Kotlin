@@ -6,14 +6,14 @@ import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 
 data class DirectorRequest(
-    @Schema(description = "감독 이름", example = "김감독")
-    @NotBlank(message = "이름이 입력되지 않았습니다.")
+    @field:Schema(description = "감독 이름", example = "김감독")
+    @field:NotBlank(message = "이름이 입력되지 않았습니다.")
     val name: String,
 
-    @Schema(description = "성별", allowableValues = ["MALE", "FEMALE", "OTHER"])
+    @field:Schema(description = "성별", allowableValues = ["MALE", "FEMALE", "OTHER"])
     val gender: String,
 
-    @Schema(description = "국적", example = "대한민국")
+    @field:Schema(description = "국적", example = "대한민국")
     val country: String
 ) {
     fun toEntity(): Director {
