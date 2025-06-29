@@ -1,38 +1,30 @@
-package chloe.movietalk.dto.response.movie;
+package chloe.movietalk.dto.response.movie
 
-import chloe.movietalk.domain.Movie;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.util.UUID;
+import chloe.movietalk.domain.Movie
+import chloe.movietalk.domain.Movie.codeFIMS
+import chloe.movietalk.domain.Movie.id
+import chloe.movietalk.domain.Movie.title
+import io.swagger.v3.oas.annotations.media.Schema
+import lombok.Builder
+import lombok.Getter
+import lombok.NoArgsConstructor
+import java.util.*
 
 @Getter
 @NoArgsConstructor
-public class MovieInfo {
-
-    @Schema(description = "영화 ID")
-    private UUID id;
-
-    @Schema(description = "FIMS 코드")
-    private String codeFIMS;
-
-    @Schema(description = "영화 제목")
-    private String title;
-
-    @Builder
-    public MovieInfo(UUID id, String codeFIMS, String title) {
-        this.id = id;
-        this.codeFIMS = codeFIMS;
-        this.title = title;
-    }
-
-    public static MovieInfo fromEntity(Movie movie) {
-        return MovieInfo.builder()
-                .id(movie.getId())
-                .codeFIMS(movie.getCodeFIMS())
-                .title(movie.getTitle())
-                .build();
+class MovieInfo @Builder constructor(
+    @field:Schema(description = "영화 ID") private var id: UUID?, @field:Schema(
+        description = "FIMS 코드"
+    ) private var codeFIMS: String?, @field:Schema(description = "영화 제목") private var title: String?
+) {
+    companion object {
+        @JvmStatic
+        fun fromEntity(movie: Movie): MovieInfo? {
+            return MovieInfo.builder()
+                .id(movie.id)
+                .codeFIMS(movie.codeFIMS)
+                .title(movie.title)
+                .build()
+        }
     }
 }
