@@ -8,11 +8,9 @@ enum class Gender {
     OTHER;
 
     companion object {
-        fun from(genderStr: String?): Gender? {
-            return genderStr?.let {
-                entries.find { it.name == genderStr }
-                    ?: throw InvalidGenderEnumValueException.EXCEPTION
-            }
+        fun from(genderStr: String?): Gender {
+            return entries.find { it.name == genderStr }
+                ?: throw InvalidGenderEnumValueException.EXCEPTION
         }
     }
 }
