@@ -1,118 +1,92 @@
-package chloe.movietalk.domain;
+package chloe.movietalk.domain
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import jakarta.persistence.*
+import lombok.*
+import java.time.LocalDate
+import java.util.*
 
 @ToString
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Movie extends BaseEntity {
-
+class Movie @Builder constructor(
+    @field:Column(
+        name = "code_fims",
+        length = 50,
+        nullable = false
+    ) private var codeFIMS: String?,
+    @field:Column(nullable = false) private var title: String?,
+    @field:Column(columnDefinition = "TEXT") private var synopsis: String?,
+    @field:Column(name = "release_date") private var releaseDate: LocalDate?,
+    @field:Column(name = "prod_year") private var prodYear: Int?,
+    @field:JoinColumn(name = "director_id") @field:ManyToOne(fetch = FetchType.LAZY) private var director: Director?,
+    totalRating: Double?,
+    reviewCount: Int?
+) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false, unique = true, updatable = false, columnDefinition = "BINARY(16)")
-    private UUID id;
+    private var id: UUID? = null
 
-    @Column(name = "code_fims", length = 50, nullable = false)
-    private String codeFIMS;
+    @OneToMany(mappedBy = "movie", cascade = [CascadeType.ALL], orphanRemoval = true)
+    private var movieActors: MutableList<MovieActor?> = ArrayList<MovieActor?>()
 
-    @Column(nullable = false)
-    private String title;
+    @OneToMany(mappedBy = "movie", cascade = [CascadeType.ALL], orphanRemoval = true)
+    private var reviews: MutableList<Review?>? = ArrayList<Review?>()
 
-    @Column(columnDefinition = "TEXT")
-    private String synopsis;
+    private var totalRating = 0.0
 
-    @Column(name = "release_date")
-    private LocalDate releaseDate;
+    private var reviewCount = 0
 
-    @Column(name = "prod_year")
-    private Integer prodYear;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "director_id")
-    private Director director;
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MovieActor> movieActors = new ArrayList<>();
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> reviews = new ArrayList<>();
-
-    private Double totalRating = 0.0;
-
-    private Integer reviewCount = 0;
-
-    @Builder
-    public Movie(String codeFIMS,
-                 String title,
-                 String synopsis,
-                 LocalDate releaseDate,
-                 Integer prodYear,
-                 Director director,
-                 Double totalRating,
-                 Integer reviewCount) {
-        this.codeFIMS = codeFIMS;
-        this.title = title;
-        this.synopsis = synopsis;
-        this.releaseDate = releaseDate;
-        this.prodYear = prodYear;
-        this.director = director;
-        this.totalRating = totalRating != null ? totalRating : 0.0;
-        this.reviewCount = reviewCount != null ? reviewCount : 0;
+    init {
+        this.totalRating = if (totalRating != null) totalRating else 0.0
+        this.reviewCount = if (reviewCount != null) reviewCount else 0
     }
 
-    public void updateMovie(Movie movie) {
-        this.codeFIMS = movie.getCodeFIMS();
-        this.title = movie.getTitle();
-        this.synopsis = movie.getSynopsis();
-        this.releaseDate = movie.getReleaseDate();
-        this.prodYear = movie.getProdYear();
-        this.director = movie.getDirector();
-        this.movieActors = movie.getMovieActors();
-        this.reviews = movie.getReviews();
-        this.totalRating = movie.getTotalRating();
-        this.reviewCount = movie.getReviewCount();
+    fun updateMovie(movie: Movie) {
+        this.codeFIMS = movie.getCodeFIMS()
+        this.title = movie.getTitle()
+        this.synopsis = movie.getSynopsis()
+        this.releaseDate = movie.getReleaseDate()
+        this.prodYear = movie.getProdYear()
+        this.director = movie.getDirector()
+        this.movieActors = movie.getMovieActors()
+        this.reviews = movie.getReviews()
+        this.totalRating = movie.getTotalRating()
+        this.reviewCount = movie.getReviewCount()
     }
 
-    public List<Actor> getActors() {
-        return movieActors.stream().map(MovieActor::getActor).toList();
+    val actors: MutableList<Actor?>
+        get() = movieActors.stream().map<Actor?> { obj: MovieActor? -> obj!!.getActor() }.toList()
+
+    fun addActor(actor: Actor) {
+        val movieActor = MovieActor(this, actor)
+        movieActors.add(movieActor)
+        actor.getMovieActors().add(movieActor)
     }
 
-    public void addActor(Actor actor) {
-        MovieActor movieActor = new MovieActor(this, actor);
-        movieActors.add(movieActor);
-        actor.getMovieActors().add(movieActor);
-    }
-
-    public void changeDirector(Director newDirector) {
+    fun changeDirector(newDirector: Director?) {
         if (this.director != null) {
-            this.director.getFilmography().remove(this);
+            this.director!!.getFilmography().remove(this)
         }
-        this.director = newDirector;
+        this.director = newDirector
         if (newDirector != null && !newDirector.getFilmography().contains(this)) {
-            newDirector.getFilmography().add(this);
+            newDirector.getFilmography().add(this)
         }
     }
 
-    public void removeDirector() {
-        this.director = null;
+    fun removeDirector() {
+        this.director = null
     }
 
-    public Double getAverageRating() {
-        return reviewCount > 0 ? Math.round(totalRating / reviewCount * 10.0) / 10.0 : 0.0;
+    val averageRating: Double
+        get() = if (reviewCount > 0) Math.round(totalRating / reviewCount * 10.0) / 10.0 else 0.0
+
+    fun updateTotalRating(totalRating: Double) {
+        this.totalRating = totalRating
     }
 
-    public void updateTotalRating(Double totalRating) {
-        this.totalRating = totalRating;
-    }
-
-    public void updateReviewCount(Integer reviewCount) {
-        this.reviewCount = reviewCount;
+    fun updateReviewCount(reviewCount: Int) {
+        this.reviewCount = reviewCount
     }
 }
