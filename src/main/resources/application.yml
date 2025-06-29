@@ -1,0 +1,44 @@
+springdoc:
+  swagger-ui:
+    # swagger-ui 접근 경로 (default는 /swagger-ui.html)
+    path: /api-docs.html
+
+    # 각 API의 그룹 표시 순서
+    # path, query, body, response 순으로 출력
+    groups-order: DESC
+
+    # 태그 정렬 순서
+    # alpha : 알파벳 순 정렬
+    # method : OpenAPI specification file에 원하는 태그 정렬 방식을 직접 기재
+    tags-sorter: alpha
+
+    # 컨트롤러 정렬 순서
+    # alpha : 알파벳 순 정렬
+    # method : delete, get, patch, post, put 순으로 정렬
+    operations-sorter: method
+
+    # swagger-ui의 default url인 petstore html의 비활성화 설정
+    disable-swagger-default-url: true
+
+    # swagger-ui에서 try 했을 때 request duration을 알려주도록 설정
+    display-request-duration: true
+
+  # openAPI 접근 경로 (default는 /v3/api-docs)
+  api-docs:
+    path: /api-docs
+
+  # Spring Actuator의 endpoint까지 보여주도록 설정
+  show-actuator: true
+
+  # request media type의 기본값
+  default-consumes-media-type: application/json
+
+  # response media type의 기본값
+  default-produces-media-type: application/json
+
+# redis
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
