@@ -1,40 +1,33 @@
 package chloe.movietalk.domain
 
 import jakarta.persistence.*
-import lombok.*
 import java.util.*
 
-@ToString
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-class Review @Builder constructor(
-    private var rating: Double?, @field:Column(
-        columnDefinition = "TEXT"
-    ) private var comment: String?, @field:JoinColumn(
-        name = "movie_id",
-        nullable = false,
-        updatable = false
-    ) @field:ManyToOne(fetch = FetchType.LAZY) private var movie: Movie?, @field:JoinColumn(
-        name = "user_id",
-        nullable = false,
-        updatable = false
-    ) @field:ManyToOne(fetch = FetchType.LAZY) private var user: SiteUser?, likes: Int?
+class Review(
+    var rating: Double,
+
+    @Column(columnDefinition = "TEXT")
+    var comment: String,
+
+    @JoinColumn(name = "movie_id", nullable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    var movie: Movie,
+
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    var user: SiteUser
 ) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false, unique = true, updatable = false, columnDefinition = "BINARY(16)")
-    private var id: UUID? = null
+    val id: UUID? = null
 
-    private var likes: Int? = 0
-
-    init {
-        this.likes = if (likes != null) likes else 0
-    }
+    var likes: Int? = 0
 
     fun updateReview(review: Review) {
-        this.rating = review.getRating()
-        this.comment = review.getComment()
+        this.rating = review.rating
+        this.comment = review.comment
     }
 
     fun updateTotalLikes(likes: Int?) {
