@@ -1,51 +1,43 @@
-package chloe.movietalk.domain;
+package chloe.movietalk.domain
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.UUID;
+import jakarta.persistence.*
+import lombok.*
+import java.util.*
 
 @ToString
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review extends BaseEntity {
-
+class Review @Builder constructor(
+    private var rating: Double?, @field:Column(
+        columnDefinition = "TEXT"
+    ) private var comment: String?, @field:JoinColumn(
+        name = "movie_id",
+        nullable = false,
+        updatable = false
+    ) @field:ManyToOne(fetch = FetchType.LAZY) private var movie: Movie?, @field:JoinColumn(
+        name = "user_id",
+        nullable = false,
+        updatable = false
+    ) @field:ManyToOne(fetch = FetchType.LAZY) private var user: SiteUser?, likes: Int?
+) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false, unique = true, updatable = false, columnDefinition = "BINARY(16)")
-    private UUID id;
+    private var id: UUID? = null
 
-    private Double rating;
+    private var likes: Int? = 0
 
-    @Column(columnDefinition = "TEXT")
-    private String comment;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id", nullable = false, updatable = false)
-    private Movie movie;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, updatable = false)
-    private SiteUser user;
-
-    private Integer likes = 0;
-
-    @Builder
-    public Review(Double rating, String comment, Movie movie, SiteUser user, Integer likes) {
-        this.rating = rating;
-        this.comment = comment;
-        this.movie = movie;
-        this.user = user;
-        this.likes = likes != null ? likes : 0;
+    init {
+        this.likes = if (likes != null) likes else 0
     }
 
-    public void updateReview(Review review) {
-        this.rating = review.getRating();
-        this.comment = review.getComment();
+    fun updateReview(review: Review) {
+        this.rating = review.getRating()
+        this.comment = review.getComment()
     }
 
-    public void updateTotalLikes(Integer likes) {
-        this.likes = likes;
+    fun updateTotalLikes(likes: Int?) {
+        this.likes = likes
     }
 }
