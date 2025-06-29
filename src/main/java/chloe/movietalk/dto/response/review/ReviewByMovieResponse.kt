@@ -1,38 +1,36 @@
 package chloe.movietalk.dto.response.review
 
 import chloe.movietalk.domain.Review
-import chloe.movietalk.domain.Review.comment
-import chloe.movietalk.domain.Review.id
-import chloe.movietalk.domain.Review.likes
-import chloe.movietalk.domain.Review.rating
 import chloe.movietalk.dto.response.user.UserInfo
 import io.swagger.v3.oas.annotations.media.Schema
-import lombok.Builder
-import lombok.Getter
-import lombok.NoArgsConstructor
 import java.util.*
 
-@Getter
-@NoArgsConstructor
-class ReviewByMovieResponse @Builder constructor(
-    @field:Schema(description = "리뷰 ID") private var id: UUID?, @field:Schema(
-        description = "평점"
-    ) private var rating: Double?, @field:Schema(description = "코멘트") private var comment: String?, @field:Schema(
-        description = "사용자 정보"
-    ) private var userInfo: UserInfo?, @field:Schema(
-        description = "좋아요 수"
-    ) private var likes: Int?
+data class ReviewByMovieResponse(
+    @field:Schema(description = "리뷰 ID")
+    val id: UUID,
+    
+    @field:Schema(description = "평점")
+    val rating: Double,
+    
+    @field:Schema(description = "코멘트")
+    val comment: String,
+    
+    @field:Schema(description = "사용자 정보")
+    val userInfo: UserInfo,
+    
+    @field:Schema(description = "좋아요 수")
+    val likes: Int
 ) {
     companion object {
         @JvmStatic
-        fun fromEntity(review: Review): ReviewByMovieResponse? {
-            return ReviewByMovieResponse.builder()
-                .id(review.id)
-                .rating(review.rating)
-                .comment(review.comment)
-                .userInfo(UserInfo.fromEntity(review.user))
-                .likes(review.likes)
-                .build()
+        fun fromEntity(review: Review): ReviewByMovieResponse {
+            return ReviewByMovieResponse(
+                id = review.id!!,
+                rating = review.rating,
+                comment = review.comment,
+                userInfo = UserInfo.fromEntity(review.user),
+                likes = review.likes
+            )
         }
     }
 }
