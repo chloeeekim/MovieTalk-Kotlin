@@ -1,20 +1,14 @@
-package chloe.movietalk.common;
+package chloe.movietalk.common
 
-import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.Getter
+import java.time.LocalDateTime
 
 @Getter
-public class SuccessResponse {
+class SuccessResponse(private val status: Int, private val data: Any?) {
+    private val success = true
+    private val timestamp: LocalDateTime
 
-    private final boolean success = true;
-    private final int status;
-    private final Object data;
-    private final LocalDateTime timestamp;
-
-    public SuccessResponse(int status, Object data) {
-        this.status = status;
-        this.data = data;
-        this.timestamp = LocalDateTime.now();
+    init {
+        this.timestamp = LocalDateTime.now()
     }
 }
