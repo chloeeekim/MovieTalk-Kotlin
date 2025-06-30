@@ -1,14 +1,13 @@
-package chloe.movietalk.config;
+package chloe.movietalk.config
 
-import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.modelmapper.ModelMapper
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 @Configuration
-public class ModelMapperConfig {
-
+class ModelMapperConfig {
     @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
+    fun modelMapper(): ModelMapper {
+        return ModelMapper()
     }
 }
