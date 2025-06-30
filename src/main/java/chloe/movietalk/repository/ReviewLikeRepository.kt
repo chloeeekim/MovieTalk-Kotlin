@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface ReviewLikeRepository : JpaRepository<ReviewLike?, Long?> {
-    fun existsByUserIdAndReviewId(userId: UUID?, reviewId: UUID?): Boolean
+interface ReviewLikeRepository : JpaRepository<ReviewLike, Long> {
+    fun existsByUserIdAndReviewId(userId: UUID, reviewId: UUID): Boolean
 
-    fun findByUserIdAndReviewId(userId: UUID?, reviewId: UUID?): Optional<ReviewLike?>?
+    fun findByUserIdAndReviewId(userId: UUID, reviewId: UUID): ReviewLike?
 }

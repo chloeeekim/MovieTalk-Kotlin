@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface ReviewRepository : JpaRepository<Review?, UUID?> {
-    fun findByMovieId(movieId: UUID?, pageable: Pageable?): Page<Review?>?
+interface ReviewRepository : JpaRepository<Review, UUID> {
+    fun findByMovieId(movieId: UUID, pageable: Pageable): Page<Review>
 
-    fun findByUserId(userId: UUID?, pageable: Pageable?): Page<Review?>?
+    fun findByUserId(userId: UUID, pageable: Pageable): Page<Review>
 }

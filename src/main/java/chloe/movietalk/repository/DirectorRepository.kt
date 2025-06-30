@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface DirectorRepository : JpaRepository<Director?, UUID?> {
-    fun findByNameContaining(keyword: String?, pageable: Pageable?): Page<Director?>?
+interface DirectorRepository : JpaRepository<Director, UUID> {
+    fun findByNameContaining(keyword: String, pageable: Pageable): Page<Director>
 
-    override fun findAll(pageable: Pageable?): Page<Director?>
+    override fun findAll(pageable: Pageable): Page<Director>
 }

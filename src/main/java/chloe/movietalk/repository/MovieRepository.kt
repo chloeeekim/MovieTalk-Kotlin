@@ -9,15 +9,15 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface MovieRepository : JpaRepository<Movie?, UUID?> {
-    fun findByTitleContaining(keyword: String?, pageable: Pageable?): Page<Movie?>?
+interface MovieRepository : JpaRepository<Movie, UUID> {
+    fun findByTitleContaining(keyword: String, pageable: Pageable): Page<Movie>
 
-    fun findByCodeFIMS(code: String?): Optional<Movie?>?
+    fun findByCodeFIMS(code: String): Movie?
 
-    fun findByDirectorId(directorId: UUID?, pageable: Pageable?): Page<Movie?>?
+    fun findByDirectorId(directorId: UUID, pageable: Pageable): Page<Movie>
 
     @EntityGraph(attributePaths = ["reviews"])
-    override fun findById(id: UUID?): Optional<Movie?>
+    override fun findById(id: UUID): Optional<Movie>
 
-    override fun findAll(pageable: Pageable?): Page<Movie?>
+    override fun findAll(pageable: Pageable): Page<Movie>
 }
