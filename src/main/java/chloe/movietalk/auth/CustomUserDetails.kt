@@ -1,59 +1,47 @@
-package chloe.movietalk.auth;
+package chloe.movietalk.auth
 
-import chloe.movietalk.domain.SiteUser;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import chloe.movietalk.domain.SiteUser
+import lombok.Getter
+import lombok.RequiredArgsConstructor
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 
 @Getter
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails {
+class CustomUserDetails : UserDetails {
+    private val user: SiteUser? = null
 
-    private final SiteUser user;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<String> roles = new ArrayList<>();
-        roles.add("ROLE_" + user.getRole().toString());
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority?> {
+        val roles: MutableList<String?> = ArrayList<String?>()
+        roles.add("ROLE_" + user!!.role.toString())
 
         return roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+            .map<SimpleGrantedAuthority?> { role: String? -> SimpleGrantedAuthority(role) }
+            .toList()
     }
 
-    @Override
-    public String getPassword() {
-        return user.getPasswordHash();
+    override fun getPassword(): String {
+        return user!!.passwordHash
     }
 
-    @Override
-    public String getUsername() {
-        return user.getId().toString();
+    override fun getUsername(): String? {
+        return user!!.id.toString()
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
+    override fun isAccountNonExpired(): Boolean {
+        return true
     }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
+    override fun isAccountNonLocked(): Boolean {
+        return true
     }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
+    override fun isCredentialsNonExpired(): Boolean {
+        return true
     }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
+    override fun isEnabled(): Boolean {
+        return true
     }
 }
