@@ -20,5 +20,5 @@ interface ActorService {
 
     fun deleteActor(id: UUID)
 
-    fun updateActorFilmography(id: UUID, filmography: MutableList<UUID>): ActorDetailResponse
+    fun updateActorFilmography(id: UUID, filmography: List<UUID>): ActorDetailResponse
 }

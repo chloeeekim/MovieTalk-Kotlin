@@ -55,7 +55,7 @@ class ActorServiceImpl(
         actorRepository.deleteById(id)
     }
 
-    override fun updateActorFilmography(id: UUID, filmography: MutableList<UUID>): ActorDetailResponse {
+    override fun updateActorFilmography(id: UUID, filmography: List<UUID>): ActorDetailResponse {
         val actor = actorRepository.findByIdOrNull(id)
             ?: throw ActorNotFoundException.EXCEPTION
 
