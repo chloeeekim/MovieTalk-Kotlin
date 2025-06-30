@@ -43,7 +43,7 @@ data class MovieDetailResponse(
     companion object {
         fun fromEntity(movie: Movie, topReviews: List<Review>): MovieDetailResponse {
             return MovieDetailResponse(
-                id = movie.id!!,
+                id = requireNotNull(movie.id) { "Movie ID must not be null"},
                 codeFIMS = movie.codeFIMS,
                 title = movie.title,
                 synopsis = movie.synopsis,

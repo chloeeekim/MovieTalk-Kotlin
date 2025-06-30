@@ -22,7 +22,7 @@ data class DirectorInfoResponse(
         @JvmStatic
         fun fromEntity(director: Director): DirectorInfoResponse {
             return DirectorInfoResponse(
-                id = director.id!!,
+                id = requireNotNull(director.id) { "Director ID must not be null"},
                 name = director.name,
                 gender = director.gender,
                 country = director.country

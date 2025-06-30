@@ -22,7 +22,7 @@ data class UserInfo(
         @JvmStatic
         fun fromEntity(user: SiteUser): UserInfo {
             return UserInfo(
-                id = user.id!!,
+                id = requireNotNull(user.id) { "User ID must not be null"},
                 email = user.email,
                 nickname = user.nickname,
                 role = user.role

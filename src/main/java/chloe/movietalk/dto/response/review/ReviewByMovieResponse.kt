@@ -25,10 +25,10 @@ data class ReviewByMovieResponse(
         @JvmStatic
         fun fromEntity(review: Review): ReviewByMovieResponse {
             return ReviewByMovieResponse(
-                id = review.id!!,
+                id = requireNotNull(review.id) { "Review ID must not be null"},
                 rating = review.rating,
                 comment = review.comment,
-                userInfo = UserInfo.fromEntity(review.user),
+                userInfo = UserInfo.fromEntity(review.user!!),
                 likes = review.likes
             )
         }

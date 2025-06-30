@@ -22,7 +22,7 @@ data class ActorInfoResponse(
         @JvmStatic
         fun fromEntity(actor: Actor): ActorInfoResponse {
             return ActorInfoResponse(
-                id = actor.id!!,
+                id = requireNotNull(actor.id) { "Actor ID must not be null"},
                 name = actor.name,
                 gender = actor.gender,
                 country = actor.country

@@ -36,7 +36,7 @@ data class UpdateMovieResponse(
         @JvmStatic
         fun fromEntity(movie: Movie): UpdateMovieResponse {
             return UpdateMovieResponse(
-                id = movie.id!!,
+                id = requireNotNull(movie.id) { "Movie ID must not be null"},
                 codeFIMS = movie.codeFIMS,
                 title = movie.title,
                 synopsis = movie.synopsis,

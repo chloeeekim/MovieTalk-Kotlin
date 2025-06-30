@@ -18,7 +18,7 @@ data class MovieInfo(
         @JvmStatic
         fun fromEntity(movie: Movie): MovieInfo {
             return MovieInfo(
-                id = movie.id!!,
+                id = requireNotNull(movie.id) { "Movie ID must not be null"},
                 codeFIMS = movie.codeFIMS,
                 title = movie.title
             )
