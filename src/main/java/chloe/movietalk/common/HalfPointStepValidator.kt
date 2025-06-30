@@ -4,10 +4,10 @@ import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
 import kotlin.math.abs
 
-class HalfPointStepValidator : ConstraintValidator<HalfPointStep?, Double?> {
-    override fun isValid(value: Double?, context: ConstraintValidatorContext?): Boolean {
+class HalfPointStepValidator : ConstraintValidator<HalfPointStep, Double> {
+    override fun isValid(value: Double?, context: ConstraintValidatorContext): Boolean {
         if (value == null) return true
 
-        return abs(value * 10 % 5) < 0.0001
+        return abs(value * 10 % 5) < 1e-6
     }
 }

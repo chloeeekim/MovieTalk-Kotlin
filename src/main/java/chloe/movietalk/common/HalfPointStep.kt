@@ -11,5 +11,5 @@ import kotlin.reflect.KClass
 annotation class HalfPointStep(
     val message: String = "평점은 0.5점 단위여야 합니다.",
     val groups: Array<KClass<*>> = [],
-    val payload: Array<KClass<out Payload?>> = []
+    val payload: Array<KClass<out Payload>> = []
 )
