@@ -1,6 +1,6 @@
-package chloe.movietalk.exception;
+package chloe.movietalk.exception
 
-public interface BaseErrorCode {
-
-    public ErrorReason getErrorReason();
+interface BaseErrorCode {
+    @JvmField
+    val errorReason: ErrorReason?
 }

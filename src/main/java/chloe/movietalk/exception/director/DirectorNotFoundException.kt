@@ -1,11 +1,7 @@
-package chloe.movietalk.exception.director;
+package chloe.movietalk.exception.director
 
-import chloe.movietalk.exception.CustomException;
+import chloe.movietalk.exception.CustomException
 
-public class DirectorNotFoundException extends CustomException {
-    public static final CustomException EXCEPTION = new DirectorNotFoundException();
-
-    private DirectorNotFoundException() {
-        super(DirectorErrorCode.DIRECTOR_NOT_FOUND);
-    }
+object DirectorNotFoundException : CustomException() {
+    val EXCEPTION: CustomException = DirectorNotFoundException()
 }

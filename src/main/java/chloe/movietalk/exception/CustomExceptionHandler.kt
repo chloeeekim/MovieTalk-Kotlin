@@ -1,41 +1,43 @@
-package chloe.movietalk.exception;
+package chloe.movietalk.exception
 
-import chloe.movietalk.exception.global.GlobalErrorCode;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.List;
+import chloe.movietalk.exception.global.GlobalErrorCode
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.validation.FieldError
+import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
-public class CustomExceptionHandler {
+class CustomExceptionHandler {
+    @ExceptionHandler(CustomException::class)
+    fun handleCustomException(e: CustomException, request: HttpServletRequest): ResponseEntity<*> {
+        val errorCode = e.getErrorCode()
+        val errorReason: ErrorReason = errorCode.errorReason!!
+        val errorResponse = ErrorResponse(errorReason, request.getRequestURL().toString())
 
-    @ExceptionHandler(CustomException.class)
-    public ResponseEntity<?> handleCustomException(CustomException e, HttpServletRequest request) {
-        BaseErrorCode errorCode = e.getErrorCode();
-        ErrorReason errorReason = errorCode.getErrorReason();
-        ErrorResponse errorResponse = new ErrorResponse(errorReason, request.getRequestURL().toString());
-
-        return ResponseEntity.status(HttpStatus.valueOf(errorReason.getStatus())).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.valueOf(errorReason.getStatus())).body<ErrorResponse?>(errorResponse)
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
-        List<String> validationErrors = e.getBindingResult()
-                .getFieldErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .toList();
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodArgumentNotValidException(
+        e: MethodArgumentNotValidException,
+        request: HttpServletRequest
+    ): ResponseEntity<*> {
+        val validationErrors = e.getBindingResult()
+            .getFieldErrors().stream()
+            .map<String?> { obj: FieldError? -> obj!!.getDefaultMessage() }
+            .toList()
 
-        GlobalErrorCode errorCode = GlobalErrorCode.INVALID_FIELD_VALUE;
-        ErrorResponse errorResponse = new ErrorResponse(errorCode.getStatus(),
-                errorCode.getCode(),
-                validationErrors,
-                request.getRequestURL().toString());
+        val errorCode = GlobalErrorCode.INVALID_FIELD_VALUE
+        val errorResponse = ErrorResponse(
+            errorCode.getStatus(),
+            errorCode.getCode(),
+            validationErrors,
+            request.getRequestURL().toString()
+        )
 
-        return ResponseEntity.status(HttpStatus.valueOf(errorCode.getStatus())).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.valueOf(errorCode.getStatus())).body<ErrorResponse?>(errorResponse)
     }
 }

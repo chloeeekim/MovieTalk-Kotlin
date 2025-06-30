@@ -1,11 +1,7 @@
-package chloe.movietalk.exception.auth;
+package chloe.movietalk.exception.auth
 
-import chloe.movietalk.exception.CustomException;
+import chloe.movietalk.exception.CustomException
 
-public class InvalidAccessToken extends CustomException {
-    public static final CustomException EXCEPTION = new InvalidAccessToken();
-
-    private InvalidAccessToken() {
-        super(AuthErrorCode.INVALID_ACCESS_TOKEN);
-    }
+object InvalidAccessToken : CustomException() {
+    val EXCEPTION: CustomException = InvalidAccessToken()
 }

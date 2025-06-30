@@ -1,12 +1,12 @@
-package chloe.movietalk.exception;
+package chloe.movietalk.exception
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Builder
+import lombok.Getter
 
 @Getter
 @Builder
-public class ErrorReason {
-    private final Integer status;
-    private final String code;
-    private final String reason;
+class ErrorReason {
+    private val status: Int? = null
+    private val code: String? = null
+    private val reason: String? = null
 }

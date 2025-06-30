@@ -1,12 +1,7 @@
-package chloe.movietalk.exception.global;
+package chloe.movietalk.exception.global
 
-import chloe.movietalk.exception.CustomException;
+import chloe.movietalk.exception.CustomException
 
-public class InvalidEnumValueException extends CustomException {
-
-    public static final CustomException EXCEPTION = new InvalidEnumValueException();
-
-    private InvalidEnumValueException() {
-        super(GlobalErrorCode.INVALID_ENUM_VALUE);
-    }
+object InvalidEnumValueException : CustomException() {
+    val EXCEPTION: CustomException = InvalidEnumValueException()
 }

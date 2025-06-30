@@ -1,15 +1,13 @@
-package chloe.movietalk.exception;
+package chloe.movietalk.exception
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.AllArgsConstructor
+import lombok.Getter
 
 @Getter
 @AllArgsConstructor
-public class CustomException extends RuntimeException {
+open class CustomException : RuntimeException() {
+    private val errorCode: BaseErrorCode? = null
 
-    private BaseErrorCode errorCode;
-
-    public ErrorReason getErrorReason() {
-        return this.errorCode.getErrorReason();
-    }
+    val errorReason: ErrorReason
+        get() = this.errorCode!!.errorReason!!
 }

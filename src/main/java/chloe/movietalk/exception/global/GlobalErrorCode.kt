@@ -1,30 +1,32 @@
-package chloe.movietalk.exception.global;
+package chloe.movietalk.exception.global
 
-import chloe.movietalk.exception.BaseErrorCode;
-import chloe.movietalk.exception.ErrorReason;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import chloe.movietalk.exception.BaseErrorCode
+import chloe.movietalk.exception.ErrorReason
+import lombok.AllArgsConstructor
+import lombok.Getter
+import org.springframework.http.HttpStatus
 
 @Getter
 @AllArgsConstructor
-public enum GlobalErrorCode implements BaseErrorCode {
-
+enum class GlobalErrorCode : BaseErrorCode {
     INVALID_ENUM_VALUE(HttpStatus.BAD_REQUEST.value(), "GLOBAL_001", "잘못된 Enum 값입니다."),
     INVALID_FIELD_VALUE(HttpStatus.BAD_REQUEST.value(), "GLOBAL_002", "잘못된 필드 값입니다."),
-    INVALID_GENDER_ENUM_VALUE(HttpStatus.BAD_REQUEST.value(), "GLOBAL_003", "잘못된 Gender 값입니다. (MALE, FEMALE, OTHER만 입력 가능)"),
+    INVALID_GENDER_ENUM_VALUE(
+        HttpStatus.BAD_REQUEST.value(),
+        "GLOBAL_003",
+        "잘못된 Gender 값입니다. (MALE, FEMALE, OTHER만 입력 가능)"
+    ),
     INVALID_ROLE_ENUM_VALUE(HttpStatus.BAD_REQUEST.value(), "GLOBAL_004", "잘못된 Role 값입니다. (ADMIN, USER만 입력 가능)");
 
-    private Integer status;
-    private String code;
-    private String reason;
+    private val status: Int? = null
+    private val code: String? = null
+    private val reason: String? = null
 
-    @Override
-    public ErrorReason getErrorReason() {
+    override fun getErrorReason(): ErrorReason? {
         return ErrorReason.builder()
-                .reason(reason)
-                .code(code)
-                .status(status)
-                .build();
+            .reason(reason)
+            .code(code)
+            .status(status)
+            .build()
     }
 }

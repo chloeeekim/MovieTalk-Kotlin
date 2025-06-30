@@ -1,12 +1,7 @@
-package chloe.movietalk.exception.review;
+package chloe.movietalk.exception.review
 
-import chloe.movietalk.exception.CustomException;
+import chloe.movietalk.exception.CustomException
 
-public class ReviewNotFoundException extends CustomException {
-
-    public static final CustomException EXCEPTION = new ReviewNotFoundException();
-
-    private ReviewNotFoundException() {
-        super(ReviewErrorCode.REVIEW_NOT_FOUND);
-    }
+object ReviewNotFoundException : CustomException() {
+    val EXCEPTION: CustomException = ReviewNotFoundException()
 }
