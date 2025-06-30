@@ -7,15 +7,11 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 
 interface UserService {
-    fun signUp(request: SignupRequest?): UserInfoResponse?
+    fun signUp(request: SignupRequest): UserInfoResponse
 
-    fun logIn(
-        loginRequest: LoginRequest?,
-        request: HttpServletRequest?,
-        response: HttpServletResponse?
-    ): UserInfoResponse?
+    fun logIn(loginRequest: LoginRequest, request: HttpServletRequest, response: HttpServletResponse): UserInfoResponse
 
-    fun refresh(request: HttpServletRequest?, response: HttpServletResponse?)
+    fun refresh(request: HttpServletRequest, response: HttpServletResponse)
 
-    fun logout(request: HttpServletRequest?)
+    fun logout(request: HttpServletRequest)
 }

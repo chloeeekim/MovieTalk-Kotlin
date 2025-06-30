@@ -10,17 +10,17 @@ import org.springframework.data.domain.Pageable
 import java.util.*
 
 interface ReviewService {
-    fun getAllReviewsByMovie(movieId: UUID?, pageable: Pageable?): Page<ReviewByMovieResponse?>?
+    fun getAllReviewsByMovie(movieId: UUID, pageable: Pageable): Page<ReviewByMovieResponse>
 
-    fun getAllReviewsByUser(userId: UUID?, pageable: Pageable?): Page<ReviewByUserResponse?>?
+    fun getAllReviewsByUser(userId: UUID, pageable: Pageable): Page<ReviewByUserResponse>
 
-    fun createReview(request: CreateReviewRequest?): ReviewDetailResponse?
+    fun createReview(request: CreateReviewRequest): ReviewDetailResponse
 
-    fun updateReview(id: UUID?, request: UpdateReviewRequest?): ReviewDetailResponse?
+    fun updateReview(id: UUID, request: UpdateReviewRequest): ReviewDetailResponse
 
-    fun deleteReview(id: UUID?)
+    fun deleteReview(id: UUID)
 
-    fun likeReview(userId: UUID?, reviewId: UUID?)
+    fun likeReview(userId: UUID, reviewId: UUID)
 
-    fun unlikeReview(userId: UUID?, reviewId: UUID?)
+    fun unlikeReview(userId: UUID, reviewId: UUID)
 }

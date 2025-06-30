@@ -8,17 +8,17 @@ import org.springframework.data.domain.Pageable
 import java.util.*
 
 interface DirectorService {
-    fun getAllDirectors(pageable: Pageable?): Page<DirectorInfoResponse?>?
+    fun getAllDirectors(pageable: Pageable): Page<DirectorInfoResponse>
 
-    fun getDirectorById(id: UUID?): DirectorDetailResponse?
+    fun getDirectorById(id: UUID): DirectorDetailResponse
 
-    fun searchDirector(keyword: String?, pageable: Pageable?): Page<DirectorInfoResponse?>?
+    fun searchDirector(keyword: String, pageable: Pageable): Page<DirectorInfoResponse>
 
-    fun createDirector(request: DirectorRequest?): DirectorInfoResponse?
+    fun createDirector(request: DirectorRequest): DirectorInfoResponse
 
-    fun updateDirector(id: UUID?, request: DirectorRequest?): DirectorInfoResponse?
+    fun updateDirector(id: UUID, request: DirectorRequest): DirectorInfoResponse
 
-    fun deleteDirector(id: UUID?)
+    fun deleteDirector(id: UUID)
 
-    fun updateDirectorFilmography(id: UUID?, movieIds: MutableList<UUID?>?): DirectorDetailResponse?
+    fun updateDirectorFilmography(id: UUID, movieIds: List<UUID>): DirectorDetailResponse
 }

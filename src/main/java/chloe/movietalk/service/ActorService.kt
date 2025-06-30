@@ -8,17 +8,17 @@ import org.springframework.data.domain.Pageable
 import java.util.*
 
 interface ActorService {
-    fun getAllActors(pageable: Pageable?): Page<ActorInfoResponse?>?
+    fun getAllActors(pageable: Pageable): Page<ActorInfoResponse>
 
-    fun getActorById(id: UUID?): ActorDetailResponse?
+    fun getActorById(id: UUID): ActorDetailResponse
 
-    fun searchActor(keyword: String?, pageable: Pageable?): Page<ActorInfoResponse?>?
+    fun searchActor(keyword: String, pageable: Pageable): Page<ActorInfoResponse>
 
-    fun createActor(request: ActorRequest?): ActorInfoResponse?
+    fun createActor(request: ActorRequest): ActorInfoResponse
 
-    fun updateActor(id: UUID?, request: ActorRequest?): ActorInfoResponse?
+    fun updateActor(id: UUID, request: ActorRequest): ActorInfoResponse
 
-    fun deleteActor(id: UUID?)
+    fun deleteActor(id: UUID)
 
-    fun updateActorFilmography(id: UUID?, filmography: MutableList<UUID?>?): ActorDetailResponse?
+    fun updateActorFilmography(id: UUID, filmography: MutableList<UUID>): ActorDetailResponse
 }
