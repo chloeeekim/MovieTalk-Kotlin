@@ -34,23 +34,23 @@ class ReviewServiceImpl(
 ) : ReviewService {
     override fun getAllReviewsByMovie(movieId: UUID, pageable: Pageable): Page<ReviewByMovieResponse> {
         movieRepository.findByIdOrNull(movieId)
-            ?: throw MovieNotFoundException.EXCEPTION
+            ?: throw MovieNotFoundException
 
         return reviewRepository.findByMovieId(movieId, pageable).map { ReviewByMovieResponse.fromEntity(it) }
     }
 
     override fun getAllReviewsByUser(userId: UUID, pageable: Pageable): Page<ReviewByUserResponse> {
         userRepository.findByIdOrNull(userId)
-            ?: throw UserNotFoundException.EXCEPTION
+            ?: throw UserNotFoundException
 
         return reviewRepository.findByUserId(userId, pageable).map { ReviewByUserResponse.fromEntity(it) }
     }
 
     override fun createReview(request: CreateReviewRequest): ReviewDetailResponse {
         val movie = movieRepository.findByIdOrNull(request.movieId)
-            ?: throw MovieNotFoundException.EXCEPTION
+            ?: throw MovieNotFoundException
         val user = userRepository.findByIdOrNull(request.userId)
-            ?: throw UserNotFoundException.EXCEPTION
+            ?: throw UserNotFoundException
 
         val save = reviewRepository.save(request.toEntity(movie, user))
 
@@ -62,7 +62,7 @@ class ReviewServiceImpl(
 
     override fun updateReview(id: UUID, request: UpdateReviewRequest): ReviewDetailResponse {
         val review = reviewRepository.findByIdOrNull(id)
-            ?: throw ReviewNotFoundException.EXCEPTION
+            ?: throw ReviewNotFoundException
 
         val oldRating = review.rating
 
@@ -76,7 +76,7 @@ class ReviewServiceImpl(
 
     override fun deleteReview(id: UUID) {
         val review = reviewRepository.findByIdOrNull(id)
-            ?: throw ReviewNotFoundException.EXCEPTION
+            ?: throw ReviewNotFoundException
 
         val movie = requireNotNull(review.movie) { "Review entity must reference movie entity" }
         movie.updateTotalRating(movie.totalRating - review.rating)
@@ -87,14 +87,14 @@ class ReviewServiceImpl(
 
     override fun likeReview(userId: UUID, reviewId: UUID) {
         require(!reviewLikeRepository.existsByUserIdAndReviewId(userId, reviewId)) {
-            throw AlreadyLikedReviewException.EXCEPTION
+            throw AlreadyLikedReviewException
         }
 
         val user = userRepository.findByIdOrNull(userId)
-            ?: throw UserNotFoundException.EXCEPTION
+            ?: throw UserNotFoundException
 
         val review = reviewRepository.findByIdOrNull(reviewId)
-            ?: throw ReviewNotFoundException.EXCEPTION
+            ?: throw ReviewNotFoundException
 
         val like = ReviewLike(
             user = user,
@@ -108,7 +108,7 @@ class ReviewServiceImpl(
 
     override fun unlikeReview(userId: UUID, reviewId: UUID) {
         val like = reviewLikeRepository.findByUserIdAndReviewId(userId, reviewId)
-            ?: throw ReviewlikeNotFoundException.EXCEPTION
+            ?: throw ReviewlikeNotFoundException
 
         val review = like.review
         review.updateTotalLikes(review.likes - 1)

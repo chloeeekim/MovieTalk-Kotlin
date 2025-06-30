@@ -34,7 +34,7 @@ class UserServiceImpl(
 ) : UserService {
     override fun signUp(request: SignupRequest): UserInfoResponse {
         userRepository.findByEmail(request.email)?.let {
-            throw AlreadyExistsUserException.EXCEPTION
+            throw AlreadyExistsUserException
         }
         val user = SiteUser(
             email = request.email,
@@ -48,16 +48,16 @@ class UserServiceImpl(
 
     override fun logIn(loginRequest: LoginRequest, request: HttpServletRequest, response: HttpServletResponse): UserInfoResponse {
         val user = userRepository.findByEmail(loginRequest.email)
-            ?: throw UserNotFoundException.EXCEPTION
+            ?: throw UserNotFoundException
 
         require(encoder.matches(loginRequest.password, user.passwordHash)) {
-            throw InvalidPasswordException.EXCEPTION
+            throw InvalidPasswordException
         }
 
         val accessToken = jwtProvider.generateAccessToken(UserInfo.fromEntity(user))
         response.setHeader("Authorization", "Bearer $accessToken")
 
-        val refreshToken = jwtProvider.generateRefreshToken(user.id)
+        val refreshToken = jwtProvider.generateRefreshToken(user.id!!)
         val refresh = Refresh(
             userId = requireNotNull(user.id) { "User ID must not be null" },
             refreshToken = refreshToken
@@ -81,19 +81,19 @@ class UserServiceImpl(
         val refreshTokenFromCookie = extractRefreshTokenFromCookie(request)
 
         if (refreshTokenFromCookie == null || !jwtProvider.isValidToken(refreshTokenFromCookie)) {
-            throw InvalidRefreshToken.EXCEPTION
+            throw InvalidRefreshToken
         }
 
         val id = jwtProvider.getUserId(refreshTokenFromCookie)
         val user = userRepository.findByIdOrNull(id)
-            ?: throw UserNotFoundException.EXCEPTION
+            ?: throw UserNotFoundException
 
         val storedToken = refreshRepository.findByUserId(id)
-            .orElseThrow { InvalidRefreshToken.EXCEPTION }
+            .orElseThrow { InvalidRefreshToken }
             .refreshToken
 
         require(refreshTokenFromCookie == storedToken) {
-            throw InvalidRefreshToken.EXCEPTION
+            throw InvalidRefreshToken
         }
 
         val newAccessToken = jwtProvider.generateAccessToken(UserInfo.fromEntity(user))
@@ -116,7 +116,7 @@ class UserServiceImpl(
         val authentication = SecurityContextHolder.getContext().authentication
 
         if (authentication == null || authentication.name == null) {
-            throw LoginRequiredException.EXCEPTION
+            throw LoginRequiredException
         }
 
         return UUID.fromString(authentication.name)

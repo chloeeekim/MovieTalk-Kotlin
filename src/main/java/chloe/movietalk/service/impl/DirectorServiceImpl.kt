@@ -27,7 +27,7 @@ class DirectorServiceImpl(
 
     override fun getDirectorById(id: UUID): DirectorDetailResponse {
         val director = directorRepository.findByIdOrNull(id)
-            ?: throw DirectorNotFoundException.EXCEPTION
+            ?: throw DirectorNotFoundException
         return DirectorDetailResponse.fromEntity(director)
     }
 
@@ -42,7 +42,7 @@ class DirectorServiceImpl(
 
     override fun updateDirector(id: UUID, request: DirectorRequest): DirectorInfoResponse {
         val director = directorRepository.findByIdOrNull(id)
-            ?: throw DirectorNotFoundException.EXCEPTION
+            ?: throw DirectorNotFoundException
 
         director.updateDirector(request.toEntity())
         return DirectorInfoResponse.fromEntity(director)
@@ -50,19 +50,19 @@ class DirectorServiceImpl(
 
     override fun deleteDirector(id: UUID) {
         directorRepository.findByIdOrNull(id)
-            ?: throw DirectorNotFoundException.EXCEPTION
+            ?: throw DirectorNotFoundException
         directorRepository.deleteById(id)
     }
 
     override fun updateDirectorFilmography(id: UUID, filmography: List<UUID>): DirectorDetailResponse {
         val director = directorRepository.findByIdOrNull(id)
-            ?: throw DirectorNotFoundException.EXCEPTION
+            ?: throw DirectorNotFoundException
 
         director.filmography.forEach { it.removeDirector() }
         director.filmography.clear()
 
         filmography
-            .map { movieRepository.findByIdOrNull(it) ?: throw MovieNotFoundException.EXCEPTION }
+            .map { movieRepository.findByIdOrNull(it) ?: throw MovieNotFoundException }
             .forEach { it.changeDirector(director) }
 
         return DirectorDetailResponse.fromEntity(director)

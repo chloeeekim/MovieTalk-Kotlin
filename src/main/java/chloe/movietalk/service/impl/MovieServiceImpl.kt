@@ -34,7 +34,7 @@ class MovieServiceImpl(
 
     override fun getMovieById(id: UUID): MovieDetailResponse {
         val movie = movieRepository.findByIdOrNull(id)
-            ?: throw MovieNotFoundException.EXCEPTION
+            ?: throw MovieNotFoundException
 
         return MovieDetailResponse.fromEntity(movie, getTop3Review(movie.reviews))
     }
@@ -45,7 +45,7 @@ class MovieServiceImpl(
     }
 
     override fun createMovie(request: MovieRequest): MovieInfoResponse {
-        movieRepository.findByCodeFIMS(request.codeFIMS)?.let { throw AlreadyExistsMovieException.EXCEPTION }
+        movieRepository.findByCodeFIMS(request.codeFIMS)?.let { throw AlreadyExistsMovieException }
 
         val save = movieRepository.save(request.toEntity(getDirectorInfo(request.directorId)))
         return MovieInfoResponse.fromEntity(save)
@@ -53,7 +53,7 @@ class MovieServiceImpl(
 
     override fun updateMovie(id: UUID, request: MovieRequest): MovieInfoResponse {
         val movie = movieRepository.findByIdOrNull(id)
-            ?: throw MovieNotFoundException.EXCEPTION
+            ?: throw MovieNotFoundException
 
         movie.updateMovie(request.toEntity(getDirectorInfo(request.directorId)))
         return MovieInfoResponse.fromEntity(movie)
@@ -61,18 +61,18 @@ class MovieServiceImpl(
 
     override fun deleteMovie(id: UUID) {
         movieRepository.findByIdOrNull(id)
-            ?: throw MovieNotFoundException.EXCEPTION
+            ?: throw MovieNotFoundException
         movieRepository.deleteById(id)
     }
 
     override fun updateMovieActors(id: UUID, actorIds: List<UUID>): UpdateMovieResponse {
         val movie = movieRepository.findByIdOrNull(id)
-            ?: throw MovieNotFoundException.EXCEPTION
+            ?: throw MovieNotFoundException
 
         movie.movieActors.clear()
 
         actorIds
-            .map { actorRepository.findByIdOrNull(it) ?: throw ActorNotFoundException.EXCEPTION }
+            .map { actorRepository.findByIdOrNull(it) ?: throw ActorNotFoundException }
             .forEach { movie.addActor(it) }
 
         return UpdateMovieResponse.fromEntity(movie)
@@ -80,17 +80,17 @@ class MovieServiceImpl(
 
     override fun updateMovieDirector(id: UUID, directorId: UUID): UpdateMovieResponse {
         val movie = movieRepository.findByIdOrNull(id)
-            ?: throw MovieNotFoundException.EXCEPTION
+            ?: throw MovieNotFoundException
 
         val director = directorRepository.findByIdOrNull(directorId)
-            ?: throw DirectorNotFoundException.EXCEPTION
+            ?: throw DirectorNotFoundException
 
         movie.changeDirector(director)
         return UpdateMovieResponse.fromEntity(movie)
     }
 
     private fun getDirectorInfo(id: UUID?): Director? {
-        return id?.let { directorRepository.findByIdOrNull(id) ?: throw DirectorNotFoundException.EXCEPTION }
+        return id?.let { directorRepository.findByIdOrNull(id) ?: throw DirectorNotFoundException }
     }
 
     private fun getTop3Review(reviews: MutableList<Review>): List<Review> {

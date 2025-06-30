@@ -28,7 +28,7 @@ class ActorServiceImpl(
 
     override fun getActorById(id: UUID): ActorDetailResponse {
         val actor = actorRepository.findByIdOrNull(id)
-            ?: throw ActorNotFoundException.EXCEPTION
+            ?: throw ActorNotFoundException
         return ActorDetailResponse.fromEntity(actor)
     }
 
@@ -43,7 +43,7 @@ class ActorServiceImpl(
 
     override fun updateActor(id: UUID, request: ActorRequest): ActorInfoResponse {
         val actor = actorRepository.findByIdOrNull(id)
-            ?: throw ActorNotFoundException.EXCEPTION
+            ?: throw ActorNotFoundException
 
         actor.updateActor(request.toEntity())
         return ActorInfoResponse.fromEntity(actor)
@@ -51,18 +51,18 @@ class ActorServiceImpl(
 
     override fun deleteActor(id: UUID) {
         actorRepository.findByIdOrNull(id)
-            ?: throw ActorNotFoundException.EXCEPTION
+            ?: throw ActorNotFoundException
         actorRepository.deleteById(id)
     }
 
     override fun updateActorFilmography(id: UUID, filmography: List<UUID>): ActorDetailResponse {
         val actor = actorRepository.findByIdOrNull(id)
-            ?: throw ActorNotFoundException.EXCEPTION
+            ?: throw ActorNotFoundException
 
         actor.movieActors.clear()
 
         filmography
-            .map { movieRepository.findByIdOrNull(it) ?: throw MovieNotFoundException.EXCEPTION }
+            .map { movieRepository.findByIdOrNull(it) ?: throw MovieNotFoundException }
             .forEach { actor.addMovie(it) }
 
         return ActorDetailResponse.fromEntity(actor)
