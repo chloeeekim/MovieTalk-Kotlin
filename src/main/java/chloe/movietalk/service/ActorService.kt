@@ -1,27 +1,24 @@
-package chloe.movietalk.service;
+package chloe.movietalk.service
 
-import chloe.movietalk.dto.request.ActorRequest;
-import chloe.movietalk.dto.response.actor.ActorDetailResponse;
-import chloe.movietalk.dto.response.actor.ActorInfoResponse;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import chloe.movietalk.dto.request.ActorRequest
+import chloe.movietalk.dto.response.actor.ActorDetailResponse
+import chloe.movietalk.dto.response.actor.ActorInfoResponse
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import java.util.*
 
-import java.util.List;
-import java.util.UUID;
+interface ActorService {
+    fun getAllActors(pageable: Pageable?): Page<ActorInfoResponse?>?
 
-public interface ActorService {
+    fun getActorById(id: UUID?): ActorDetailResponse?
 
-    public Page<ActorInfoResponse> getAllActors(Pageable pageable);
+    fun searchActor(keyword: String?, pageable: Pageable?): Page<ActorInfoResponse?>?
 
-    public ActorDetailResponse getActorById(UUID id);
+    fun createActor(request: ActorRequest?): ActorInfoResponse?
 
-    public Page<ActorInfoResponse> searchActor(String keyword, Pageable pageable);
+    fun updateActor(id: UUID?, request: ActorRequest?): ActorInfoResponse?
 
-    public ActorInfoResponse createActor(ActorRequest request);
+    fun deleteActor(id: UUID?)
 
-    public ActorInfoResponse updateActor(UUID id, ActorRequest request);
-
-    public void deleteActor(UUID id);
-
-    public ActorDetailResponse updateActorFilmography(UUID id, List<UUID> filmography);
+    fun updateActorFilmography(id: UUID?, filmography: MutableList<UUID?>?): ActorDetailResponse?
 }

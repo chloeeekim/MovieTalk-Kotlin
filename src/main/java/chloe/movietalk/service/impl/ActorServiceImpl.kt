@@ -1,83 +1,80 @@
-package chloe.movietalk.service.impl;
+package chloe.movietalk.service.impl
 
-import chloe.movietalk.domain.Actor;
-import chloe.movietalk.dto.request.ActorRequest;
-import chloe.movietalk.dto.response.actor.ActorDetailResponse;
-import chloe.movietalk.dto.response.actor.ActorInfoResponse;
-import chloe.movietalk.exception.actor.ActorNotFoundException;
-import chloe.movietalk.exception.movie.MovieNotFoundException;
-import chloe.movietalk.repository.ActorRepository;
-import chloe.movietalk.repository.MovieRepository;
-import chloe.movietalk.service.ActorService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.UUID;
+import chloe.movietalk.domain.Actor
+import chloe.movietalk.domain.Movie
+import chloe.movietalk.dto.request.ActorRequest
+import chloe.movietalk.dto.response.actor.ActorDetailResponse
+import chloe.movietalk.dto.response.actor.ActorInfoResponse
+import chloe.movietalk.exception.CustomException
+import chloe.movietalk.exception.actor.ActorNotFoundException
+import chloe.movietalk.exception.movie.MovieNotFoundException
+import chloe.movietalk.repository.ActorRepository
+import chloe.movietalk.repository.MovieRepository
+import chloe.movietalk.service.ActorService
+import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
+import java.util.function.Function
+import java.util.function.Supplier
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ActorServiceImpl implements ActorService {
+class ActorServiceImpl : ActorService {
+    private val actorRepository: ActorRepository? = null
+    private val movieRepository: MovieRepository? = null
 
-    private final ActorRepository actorRepository;
-    private final MovieRepository movieRepository;
-
-    @Override
-    public Page<ActorInfoResponse> getAllActors(Pageable pageable) {
-        return actorRepository.findAll(pageable)
-                .map(ActorInfoResponse::fromEntity);
+    override fun getAllActors(pageable: Pageable): Page<ActorInfoResponse?>? {
+        return actorRepository!!.findAll(pageable)
+            .map<ActorInfoResponse?>(Function { obj: Actor? -> ActorInfoResponse.Companion.fromEntity() })
     }
 
-    @Override
-    public ActorDetailResponse getActorById(UUID id) {
-        Actor actor = actorRepository.findById(id)
-                .orElseThrow(() -> ActorNotFoundException.EXCEPTION);
-        return ActorDetailResponse.fromEntity(actor);
+    override fun getActorById(id: UUID): ActorDetailResponse? {
+        val actor = actorRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { ActorNotFoundException.EXCEPTION })
+        return ActorDetailResponse.fromEntity(actor)
     }
 
-    @Override
-    public Page<ActorInfoResponse> searchActor(String keyword, Pageable pageable) {
-        return actorRepository.findByNameContaining(keyword, pageable)
-                .map(ActorInfoResponse::fromEntity);
+    override fun searchActor(keyword: String, pageable: Pageable): Page<ActorInfoResponse?>? {
+        return actorRepository!!.findByNameContaining(keyword, pageable)
+            .map<ActorInfoResponse?>(Function { obj: Actor? -> ActorInfoResponse.Companion.fromEntity() })
     }
 
-    @Override
-    public ActorInfoResponse createActor(ActorRequest request) {
-        Actor actor = actorRepository.save(request.toEntity());
-        return ActorInfoResponse.fromEntity(actor);
+    override fun createActor(request: ActorRequest): ActorInfoResponse? {
+        val actor = actorRepository!!.save<Actor>(request.toEntity())
+        return ActorInfoResponse.fromEntity(actor)
     }
 
-    @Override
-    public ActorInfoResponse updateActor(UUID id, ActorRequest request) {
-        Actor actor = actorRepository.findById(id)
-                .orElseThrow(() -> ActorNotFoundException.EXCEPTION);
+    override fun updateActor(id: UUID, request: ActorRequest): ActorInfoResponse? {
+        val actor = actorRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { ActorNotFoundException.EXCEPTION })
 
-        actor.updateActor(request.toEntity());
-        return ActorInfoResponse.fromEntity(actor);
+        actor.updateActor(request.toEntity())
+        return ActorInfoResponse.fromEntity(actor)
     }
 
-    @Override
-    public void deleteActor(UUID id) {
-        actorRepository.findById(id)
-                .orElseThrow(() -> ActorNotFoundException.EXCEPTION);
-        actorRepository.deleteById(id);
+    override fun deleteActor(id: UUID) {
+        actorRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { ActorNotFoundException.EXCEPTION })
+        actorRepository.deleteById(id)
     }
 
-    @Override
-    public ActorDetailResponse updateActorFilmography(UUID id, List<UUID> filmography) {
-        Actor actor = actorRepository.findById(id)
-                .orElseThrow(() -> ActorNotFoundException.EXCEPTION);
+    override fun updateActorFilmography(id: UUID, filmography: MutableList<UUID?>): ActorDetailResponse? {
+        val actor = actorRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { ActorNotFoundException.EXCEPTION })
 
-        actor.getMovieActors().clear();
+        actor.movieActors.clear()
 
         filmography.stream()
-                .map(l -> movieRepository.findById(l).orElseThrow(() -> MovieNotFoundException.EXCEPTION))
-                .forEach(actor::addMovie);
+            .map<Movie?> { l: UUID? ->
+                movieRepository!!.findById(l)
+                    .orElseThrow<CustomException?>(Supplier { MovieNotFoundException.EXCEPTION })
+            }
+            .forEach { movie: Movie? -> actor.addMovie(movie!!) }
 
-        return ActorDetailResponse.fromEntity(actor);
+        return ActorDetailResponse.fromEntity(actor)
     }
 }

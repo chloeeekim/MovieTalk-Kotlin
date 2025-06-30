@@ -1,28 +1,26 @@
-package chloe.movietalk.service;
+package chloe.movietalk.service
 
-import chloe.movietalk.dto.request.CreateReviewRequest;
-import chloe.movietalk.dto.request.UpdateReviewRequest;
-import chloe.movietalk.dto.response.review.ReviewByMovieResponse;
-import chloe.movietalk.dto.response.review.ReviewByUserResponse;
-import chloe.movietalk.dto.response.review.ReviewDetailResponse;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import chloe.movietalk.dto.request.CreateReviewRequest
+import chloe.movietalk.dto.request.UpdateReviewRequest
+import chloe.movietalk.dto.response.review.ReviewByMovieResponse
+import chloe.movietalk.dto.response.review.ReviewByUserResponse
+import chloe.movietalk.dto.response.review.ReviewDetailResponse
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import java.util.*
 
-import java.util.UUID;
+interface ReviewService {
+    fun getAllReviewsByMovie(movieId: UUID?, pageable: Pageable?): Page<ReviewByMovieResponse?>?
 
-public interface ReviewService {
+    fun getAllReviewsByUser(userId: UUID?, pageable: Pageable?): Page<ReviewByUserResponse?>?
 
-    public Page<ReviewByMovieResponse> getAllReviewsByMovie(UUID movieId, Pageable pageable);
+    fun createReview(request: CreateReviewRequest?): ReviewDetailResponse?
 
-    public Page<ReviewByUserResponse> getAllReviewsByUser(UUID userId, Pageable pageable);
+    fun updateReview(id: UUID?, request: UpdateReviewRequest?): ReviewDetailResponse?
 
-    public ReviewDetailResponse createReview(CreateReviewRequest request);
+    fun deleteReview(id: UUID?)
 
-    public ReviewDetailResponse updateReview(UUID id, UpdateReviewRequest request);
+    fun likeReview(userId: UUID?, reviewId: UUID?)
 
-    public void deleteReview(UUID id);
-
-    public void likeReview(UUID userId, UUID reviewId);
-
-    public void unlikeReview(UUID userId, UUID reviewId);
+    fun unlikeReview(userId: UUID?, reviewId: UUID?)
 }

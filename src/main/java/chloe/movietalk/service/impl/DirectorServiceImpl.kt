@@ -1,86 +1,83 @@
-package chloe.movietalk.service.impl;
+package chloe.movietalk.service.impl
 
-import chloe.movietalk.domain.Director;
-import chloe.movietalk.domain.Movie;
-import chloe.movietalk.dto.request.DirectorRequest;
-import chloe.movietalk.dto.response.director.DirectorDetailResponse;
-import chloe.movietalk.dto.response.director.DirectorInfoResponse;
-import chloe.movietalk.exception.director.DirectorNotFoundException;
-import chloe.movietalk.exception.movie.MovieNotFoundException;
-import chloe.movietalk.repository.DirectorRepository;
-import chloe.movietalk.repository.MovieRepository;
-import chloe.movietalk.service.DirectorService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.UUID;
+import chloe.movietalk.domain.Director
+import chloe.movietalk.domain.Movie
+import chloe.movietalk.dto.request.DirectorRequest
+import chloe.movietalk.dto.response.director.DirectorDetailResponse
+import chloe.movietalk.dto.response.director.DirectorInfoResponse
+import chloe.movietalk.exception.CustomException
+import chloe.movietalk.exception.director.DirectorNotFoundException
+import chloe.movietalk.exception.movie.MovieNotFoundException
+import chloe.movietalk.repository.DirectorRepository
+import chloe.movietalk.repository.MovieRepository
+import chloe.movietalk.service.DirectorService
+import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
+import java.util.function.Consumer
+import java.util.function.Function
+import java.util.function.Supplier
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DirectorServiceImpl implements DirectorService {
+class DirectorServiceImpl : DirectorService {
+    private val movieRepository: MovieRepository? = null
+    private val directorRepository: DirectorRepository? = null
 
-    private final MovieRepository movieRepository;
-    private final DirectorRepository directorRepository;
-
-    @Override
-    public Page<DirectorInfoResponse> getAllDirectors(Pageable pageable) {
-        return directorRepository.findAll(pageable)
-                .map(DirectorInfoResponse::fromEntity);
+    override fun getAllDirectors(pageable: Pageable): Page<DirectorInfoResponse?>? {
+        return directorRepository!!.findAll(pageable)
+            .map<DirectorInfoResponse?>(Function { obj: Director? -> DirectorInfoResponse.Companion.fromEntity() })
     }
 
-    @Override
-    public DirectorDetailResponse getDirectorById(UUID id) {
-        Director director = directorRepository.findById(id)
-                .orElseThrow(() -> DirectorNotFoundException.EXCEPTION);
-        return DirectorDetailResponse.fromEntity(director);
+    override fun getDirectorById(id: UUID): DirectorDetailResponse? {
+        val director = directorRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { DirectorNotFoundException.EXCEPTION })
+        return DirectorDetailResponse.fromEntity(director)
     }
 
-    @Override
-    public Page<DirectorInfoResponse> searchDirector(String keyword, Pageable pageable) {
-        return directorRepository.findByNameContaining(keyword, pageable)
-                .map(DirectorInfoResponse::fromEntity);
+    override fun searchDirector(keyword: String, pageable: Pageable): Page<DirectorInfoResponse?>? {
+        return directorRepository!!.findByNameContaining(keyword, pageable)
+            .map<DirectorInfoResponse?>(Function { obj: Director? -> DirectorInfoResponse.Companion.fromEntity() })
     }
 
-    @Override
-    public DirectorInfoResponse createDirector(DirectorRequest request) {
-        Director save = directorRepository.save(request.toEntity());
-        return DirectorInfoResponse.fromEntity(save);
+    override fun createDirector(request: DirectorRequest): DirectorInfoResponse? {
+        val save = directorRepository!!.save<Director>(request.toEntity())
+        return DirectorInfoResponse.fromEntity(save)
     }
 
-    @Override
-    public DirectorInfoResponse updateDirector(UUID id, DirectorRequest request) {
-        Director director = directorRepository.findById(id)
-                .orElseThrow(() -> DirectorNotFoundException.EXCEPTION);
+    override fun updateDirector(id: UUID, request: DirectorRequest): DirectorInfoResponse? {
+        val director = directorRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { DirectorNotFoundException.EXCEPTION })
 
-        director.updateDirector(request.toEntity());
-        return DirectorInfoResponse.fromEntity(director);
+        director.updateDirector(request.toEntity())
+        return DirectorInfoResponse.fromEntity(director)
     }
 
-    @Override
-    public void deleteDirector(UUID id) {
-        directorRepository.findById(id)
-                .orElseThrow(() -> DirectorNotFoundException.EXCEPTION);
-        directorRepository.deleteById(id);
+    override fun deleteDirector(id: UUID) {
+        directorRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { DirectorNotFoundException.EXCEPTION })
+        directorRepository.deleteById(id)
     }
 
-    @Override
-    public DirectorDetailResponse updateDirectorFilmography(UUID id, List<UUID> filmography) {
-        Director director = directorRepository.findById(id)
-                .orElseThrow(() -> DirectorNotFoundException.EXCEPTION);
+    override fun updateDirectorFilmography(id: UUID, filmography: MutableList<UUID?>): DirectorDetailResponse? {
+        val director = directorRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { DirectorNotFoundException.EXCEPTION })
 
-        director.getFilmography()
-                .forEach(Movie::removeDirector);
-        director.getFilmography().clear();
+        director.filmography
+            .forEach(Consumer { obj: Movie? -> obj!!.removeDirector() })
+        director.filmography.clear()
 
         filmography.stream()
-                .map(l -> movieRepository.findById(l).orElseThrow(() -> MovieNotFoundException.EXCEPTION))
-                .forEach(m -> m.changeDirector(director));
+            .map<Movie?> { l: UUID? ->
+                movieRepository!!.findById(l)
+                    .orElseThrow<CustomException?>(Supplier { MovieNotFoundException.EXCEPTION })
+            }
+            .forEach { m: Movie? -> m!!.changeDirector(director) }
 
-        return DirectorDetailResponse.fromEntity(director);
+        return DirectorDetailResponse.fromEntity(director)
     }
 }

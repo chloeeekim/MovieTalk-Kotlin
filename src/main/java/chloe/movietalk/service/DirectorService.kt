@@ -1,27 +1,24 @@
-package chloe.movietalk.service;
+package chloe.movietalk.service
 
-import chloe.movietalk.dto.request.DirectorRequest;
-import chloe.movietalk.dto.response.director.DirectorDetailResponse;
-import chloe.movietalk.dto.response.director.DirectorInfoResponse;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import chloe.movietalk.dto.request.DirectorRequest
+import chloe.movietalk.dto.response.director.DirectorDetailResponse
+import chloe.movietalk.dto.response.director.DirectorInfoResponse
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import java.util.*
 
-import java.util.List;
-import java.util.UUID;
+interface DirectorService {
+    fun getAllDirectors(pageable: Pageable?): Page<DirectorInfoResponse?>?
 
-public interface DirectorService {
+    fun getDirectorById(id: UUID?): DirectorDetailResponse?
 
-    public Page<DirectorInfoResponse> getAllDirectors(Pageable pageable);
+    fun searchDirector(keyword: String?, pageable: Pageable?): Page<DirectorInfoResponse?>?
 
-    public DirectorDetailResponse getDirectorById(UUID id);
+    fun createDirector(request: DirectorRequest?): DirectorInfoResponse?
 
-    public Page<DirectorInfoResponse> searchDirector(String keyword, Pageable pageable);
+    fun updateDirector(id: UUID?, request: DirectorRequest?): DirectorInfoResponse?
 
-    public DirectorInfoResponse createDirector(DirectorRequest request);
+    fun deleteDirector(id: UUID?)
 
-    public DirectorInfoResponse updateDirector(UUID id, DirectorRequest request);
-
-    public void deleteDirector(UUID id);
-
-    public DirectorDetailResponse updateDirectorFilmography(UUID id, List<UUID> movieIds);
+    fun updateDirectorFilmography(id: UUID?, movieIds: MutableList<UUID?>?): DirectorDetailResponse?
 }

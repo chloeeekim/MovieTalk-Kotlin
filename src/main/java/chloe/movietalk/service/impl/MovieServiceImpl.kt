@@ -1,125 +1,120 @@
-package chloe.movietalk.service.impl;
+package chloe.movietalk.service.impl
 
-import chloe.movietalk.domain.Director;
-import chloe.movietalk.domain.Movie;
-import chloe.movietalk.domain.Review;
-import chloe.movietalk.dto.request.MovieRequest;
-import chloe.movietalk.dto.response.movie.MovieDetailResponse;
-import chloe.movietalk.dto.response.movie.MovieInfoResponse;
-import chloe.movietalk.dto.response.movie.UpdateMovieResponse;
-import chloe.movietalk.exception.actor.ActorNotFoundException;
-import chloe.movietalk.exception.director.DirectorNotFoundException;
-import chloe.movietalk.exception.movie.AlreadyExistsMovieException;
-import chloe.movietalk.exception.movie.MovieNotFoundException;
-import chloe.movietalk.repository.ActorRepository;
-import chloe.movietalk.repository.DirectorRepository;
-import chloe.movietalk.repository.MovieRepository;
-import chloe.movietalk.service.MovieService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import chloe.movietalk.domain.Actor
+import chloe.movietalk.domain.Director
+import chloe.movietalk.domain.Movie
+import chloe.movietalk.domain.Review
+import chloe.movietalk.dto.request.MovieRequest
+import chloe.movietalk.dto.response.movie.MovieDetailResponse
+import chloe.movietalk.dto.response.movie.MovieInfoResponse
+import chloe.movietalk.dto.response.movie.UpdateMovieResponse
+import chloe.movietalk.exception.CustomException
+import chloe.movietalk.exception.actor.ActorNotFoundException
+import chloe.movietalk.exception.director.DirectorNotFoundException
+import chloe.movietalk.exception.movie.AlreadyExistsMovieException
+import chloe.movietalk.exception.movie.MovieNotFoundException
+import chloe.movietalk.repository.ActorRepository
+import chloe.movietalk.repository.DirectorRepository
+import chloe.movietalk.repository.MovieRepository
+import chloe.movietalk.service.MovieService
+import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
+import java.util.function.Function
+import java.util.function.Supplier
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MovieServiceImpl implements MovieService {
+class MovieServiceImpl : MovieService {
+    private val movieRepository: MovieRepository? = null
+    private val directorRepository: DirectorRepository? = null
+    private val actorRepository: ActorRepository? = null
 
-    private final MovieRepository movieRepository;
-    private final DirectorRepository directorRepository;
-    private final ActorRepository actorRepository;
-
-    @Override
-    public Page<MovieInfoResponse> getAllMovies(Pageable pageable) {
-        return movieRepository.findAll(pageable)
-                .map(MovieInfoResponse::fromEntity);
+    override fun getAllMovies(pageable: Pageable): Page<MovieInfoResponse?>? {
+        return movieRepository!!.findAll(pageable)
+            .map<MovieInfoResponse?>(Function { obj: Movie? -> MovieInfoResponse.Companion.fromEntity() })
     }
 
-    @Override
-    public MovieDetailResponse getMovieById(UUID id) {
-        Movie movie = movieRepository.findById(id)
-                .orElseThrow(() -> MovieNotFoundException.EXCEPTION);
+    override fun getMovieById(id: UUID): MovieDetailResponse {
+        val movie = movieRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { MovieNotFoundException.EXCEPTION })
 
-        return MovieDetailResponse.fromEntity(movie, getTop3Review(movie.getReviews()));
+        return MovieDetailResponse.fromEntity(movie, getTop3Review(movie.reviews))
     }
 
-    @Override
-    public Page<MovieInfoResponse> searchMovies(String keyword, Pageable pageable) {
-        return movieRepository.findByTitleContaining(keyword, pageable)
-                .map(MovieInfoResponse::fromEntity);
+    override fun searchMovies(keyword: String, pageable: Pageable): Page<MovieInfoResponse?>? {
+        return movieRepository!!.findByTitleContaining(keyword, pageable)
+            .map<MovieInfoResponse?>(Function { obj: Movie? -> MovieInfoResponse.Companion.fromEntity() })
     }
 
-    @Override
-    public MovieInfoResponse createMovie(MovieRequest request) {
-        movieRepository.findByCodeFIMS(request.getCodeFIMS())
-                .ifPresent(a -> {
-                    throw AlreadyExistsMovieException.EXCEPTION;
-                });
+    override fun createMovie(request: MovieRequest): MovieInfoResponse? {
+        movieRepository!!.findByCodeFIMS(request.codeFIMS)
+            .ifPresent({ a ->
+                throw AlreadyExistsMovieException.EXCEPTION
+            })
 
-        Movie save = movieRepository.save(request.toEntity(getDirectorInfo(request.getDirectorId())));
-        return MovieInfoResponse.fromEntity(save);
+        val save = movieRepository.save<Movie>(request.toEntity(getDirectorInfo(request.directorId)))
+        return MovieInfoResponse.fromEntity(save)
     }
 
-    @Override
-    public MovieInfoResponse updateMovie(UUID id, MovieRequest request) {
-        Movie movie = movieRepository.findById(id)
-                .orElseThrow(() -> MovieNotFoundException.EXCEPTION);
+    override fun updateMovie(id: UUID, request: MovieRequest): MovieInfoResponse? {
+        val movie = movieRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { MovieNotFoundException.EXCEPTION })
 
-        movie.updateMovie(request.toEntity(getDirectorInfo(request.getDirectorId())));
-        return MovieInfoResponse.fromEntity(movie);
+        movie.updateMovie(request.toEntity(getDirectorInfo(request.directorId)))
+        return MovieInfoResponse.fromEntity(movie)
     }
 
-    @Override
-    public void deleteMovie(UUID id) {
-        movieRepository.findById(id)
-                .orElseThrow(() -> MovieNotFoundException.EXCEPTION);
-        movieRepository.deleteById(id);
+    override fun deleteMovie(id: UUID) {
+        movieRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { MovieNotFoundException.EXCEPTION })
+        movieRepository.deleteById(id)
     }
 
-    @Override
-    public UpdateMovieResponse updateMovieActors(UUID id, List<UUID> actorIds) {
-        Movie movie = movieRepository.findById(id)
-                .orElseThrow(() -> MovieNotFoundException.EXCEPTION);
+    override fun updateMovieActors(id: UUID, actorIds: MutableList<UUID?>): UpdateMovieResponse? {
+        val movie = movieRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { MovieNotFoundException.EXCEPTION })
 
-        movie.getMovieActors().clear();
+        movie.movieActors.clear()
 
         actorIds.stream()
-                .map(l -> actorRepository.findById(l).orElseThrow(() -> ActorNotFoundException.EXCEPTION))
-                .forEach(movie::addActor);
+            .map<Actor?> { l: UUID? ->
+                actorRepository!!.findById(l)
+                    .orElseThrow<CustomException?>(Supplier { ActorNotFoundException.EXCEPTION })
+            }
+            .forEach { actor: Actor? -> movie.addActor(actor!!) }
 
-        return UpdateMovieResponse.fromEntity(movie);
+        return UpdateMovieResponse.fromEntity(movie)
     }
 
-    @Override
-    public UpdateMovieResponse updateMovieDirector(UUID id, UUID directorId) {
-        Movie movie = movieRepository.findById(id)
-                .orElseThrow(() -> MovieNotFoundException.EXCEPTION);
+    override fun updateMovieDirector(id: UUID, directorId: UUID): UpdateMovieResponse? {
+        val movie = movieRepository!!.findById(id)
+            .orElseThrow<CustomException?>(Supplier { MovieNotFoundException.EXCEPTION })
 
-        Director director = directorRepository.findById(directorId)
-                .orElseThrow(() -> DirectorNotFoundException.EXCEPTION);
+        val director = directorRepository!!.findById(directorId)
+            .orElseThrow<CustomException?>(Supplier { DirectorNotFoundException.EXCEPTION })
 
-        movie.changeDirector(director);
-        return UpdateMovieResponse.fromEntity(movie);
+        movie.changeDirector(director)
+        return UpdateMovieResponse.fromEntity(movie)
     }
 
-    private Director getDirectorInfo(UUID id) {
+    private fun getDirectorInfo(id: UUID?): Director? {
         if (id == null) {
-            return null;
+            return null
         } else {
-            return directorRepository.findById(id)
-                    .orElseThrow(() -> DirectorNotFoundException.EXCEPTION);
+            return directorRepository!!.findById(id)
+                .orElseThrow<CustomException?>(Supplier { DirectorNotFoundException.EXCEPTION })
         }
     }
 
-    private List<Review> getTop3Review(List<Review> reviews) {
+    private fun getTop3Review(reviews: MutableList<Review?>): MutableList<Review?> {
         return reviews.stream()
-                .sorted(Comparator.comparingInt(Review::getLikes).reversed())
-                .limit(3)
-                .toList();
+            .sorted(Comparator.comparingInt<Review?>(Review::likes).reversed())
+            .limit(3)
+            .toList()
     }
 }
