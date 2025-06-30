@@ -31,12 +31,12 @@ class JwtAuthFilter(
             val blackLists = redisUtil.getBlacklist(token) as String?
 
             if (blackLists != null && blackLists == "logout") {
-                throw LoginRequiredException.EXCEPTION
+                throw LoginRequiredException
             }
 
             // accessToken이 만료된 경우
             if (jwtProvider.isTokenExpired(token)) {
-                throw InvalidAccessToken.EXCEPTION
+                throw InvalidAccessToken
             } else {
                 // accessToken이 만료되지 않았고, valid한 경우, 인증정보 등록
                 if (jwtProvider.isValidToken(token)) {

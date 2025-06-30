@@ -10,7 +10,7 @@ enum class Gender {
     companion object {
         fun from(genderStr: String?): Gender {
             return entries.find { it.name == genderStr }
-                ?: throw InvalidGenderEnumValueException.EXCEPTION
+                ?: throw InvalidGenderEnumValueException
         }
     }
 }

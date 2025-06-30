@@ -9,7 +9,7 @@ enum class UserRole {
     companion object {
         fun from(role: String?): UserRole {
             return entries.find { it.name == role }
-                ?: throw InvalidRoleEnumValueException.EXCEPTION
+                ?: throw InvalidRoleEnumValueException
         }
     }
 }
