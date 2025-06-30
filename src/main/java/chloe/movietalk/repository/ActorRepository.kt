@@ -1,17 +1,15 @@
-package chloe.movietalk.repository;
+package chloe.movietalk.repository
 
-import chloe.movietalk.domain.Actor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.UUID;
+import chloe.movietalk.domain.Actor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
-public interface ActorRepository extends JpaRepository<Actor, UUID> {
+interface ActorRepository : JpaRepository<Actor?, UUID?> {
+    fun findByNameContaining(keyword: String?, pageable: Pageable?): Page<Actor?>?
 
-    Page<Actor> findByNameContaining(String keyword, Pageable pageable);
-
-    Page<Actor> findAll(Pageable pageable);
+    override fun findAll(pageable: Pageable?): Page<Actor?>
 }

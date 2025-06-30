@@ -1,26 +1,23 @@
-package chloe.movietalk.repository;
+package chloe.movietalk.repository
 
-import chloe.movietalk.domain.Movie;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
-import java.util.UUID;
+import chloe.movietalk.domain.Movie
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.EntityGraph
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
-public interface MovieRepository extends JpaRepository<Movie, UUID> {
-    Page<Movie> findByTitleContaining(String keyword, Pageable pageable);
+interface MovieRepository : JpaRepository<Movie?, UUID?> {
+    fun findByTitleContaining(keyword: String?, pageable: Pageable?): Page<Movie?>?
 
-    Optional<Movie> findByCodeFIMS(String code);
+    fun findByCodeFIMS(code: String?): Optional<Movie?>?
 
-    Page<Movie> findByDirectorId(UUID directorId, Pageable pageable);
+    fun findByDirectorId(directorId: UUID?, pageable: Pageable?): Page<Movie?>?
 
-    @Override
-    @EntityGraph(attributePaths = {"reviews"})
-    Optional<Movie> findById(UUID id);
+    @EntityGraph(attributePaths = ["reviews"])
+    override fun findById(id: UUID?): Optional<Movie?>
 
-    Page<Movie> findAll(Pageable pageable);
+    override fun findAll(pageable: Pageable?): Page<Movie?>
 }

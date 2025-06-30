@@ -1,11 +1,9 @@
-package chloe.movietalk.repository;
+package chloe.movietalk.repository
 
-import chloe.movietalk.domain.Refresh;
-import org.springframework.data.repository.CrudRepository;
+import chloe.movietalk.domain.Refresh
+import org.springframework.data.repository.CrudRepository
+import java.util.*
 
-import java.util.Optional;
-import java.util.UUID;
-
-public interface RefreshRepository extends CrudRepository<Refresh, UUID> {
-    Optional<Refresh> findByUserId(UUID id);
+interface RefreshRepository : CrudRepository<Refresh?, UUID?> {
+    fun findByUserId(id: UUID?): Optional<Refresh?>?
 }
