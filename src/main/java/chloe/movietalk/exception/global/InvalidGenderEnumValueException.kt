@@ -2,6 +2,6 @@ package chloe.movietalk.exception.global
 
 import chloe.movietalk.exception.CustomException
 
-object InvalidGenderEnumValueException : CustomException() {
-    val EXCEPTION: CustomException = InvalidGenderEnumValueException()
+object InvalidGenderEnumValueException : CustomException(GlobalErrorCode.INVALID_GENDER_ENUM_VALUE) {
+    val EXCEPTION: CustomException = this
 }

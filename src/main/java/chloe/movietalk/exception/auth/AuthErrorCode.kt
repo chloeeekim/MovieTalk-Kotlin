@@ -2,13 +2,13 @@ package chloe.movietalk.exception.auth
 
 import chloe.movietalk.exception.BaseErrorCode
 import chloe.movietalk.exception.ErrorReason
-import lombok.AllArgsConstructor
-import lombok.Getter
 import org.springframework.http.HttpStatus
 
-@Getter
-@AllArgsConstructor
-enum class AuthErrorCode : BaseErrorCode {
+enum class AuthErrorCode(
+    val status: Int,
+    val code: String,
+    val reason: String
+) : BaseErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN.value(), "AUTH_001", "권한이 없습니다."),
     ACCESS_DENIED(HttpStatus.UNAUTHORIZED.value(), "AUTH_002", "인증되지 않은 사용자입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "AUTH_003", "존재하지 않는 사용자입니다."),
@@ -18,15 +18,7 @@ enum class AuthErrorCode : BaseErrorCode {
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED.value(), "AUTH_007", "유효하지 않은 Access Token입니다."),
     LOGIN_REQUIRED(HttpStatus.UNAUTHORIZED.value(), "AUTH_008", "계정에 로그인 해야 합니다.");
 
-    private val status: Int? = null
-    private val code: String? = null
-    private val reason: String? = null
-
-    override fun getErrorReason(): ErrorReason? {
-        return ErrorReason.builder()
-            .reason(reason)
-            .code(code)
-            .status(status)
-            .build()
+    override fun getErrorReason(): ErrorReason {
+        return ErrorReason(status, code, reason)
     }
 }

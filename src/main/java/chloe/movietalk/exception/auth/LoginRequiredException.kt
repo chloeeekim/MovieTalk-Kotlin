@@ -2,6 +2,6 @@ package chloe.movietalk.exception.auth
 
 import chloe.movietalk.exception.CustomException
 
-object LoginRequiredException : CustomException() {
-    val EXCEPTION: CustomException = LoginRequiredException()
+object LoginRequiredException : CustomException(AuthErrorCode.LOGIN_REQUIRED) {
+    val EXCEPTION: CustomException = this
 }

@@ -4,7 +4,6 @@ import chloe.movietalk.exception.global.GlobalErrorCode
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -13,11 +12,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class CustomExceptionHandler {
     @ExceptionHandler(CustomException::class)
     fun handleCustomException(e: CustomException, request: HttpServletRequest): ResponseEntity<*> {
-        val errorCode = e.getErrorCode()
-        val errorReason: ErrorReason = errorCode.errorReason!!
-        val errorResponse = ErrorResponse(errorReason, request.getRequestURL().toString())
+        val errorCode = e.errorCode
+        val errorReason = errorCode.getErrorReason()
+        val errorResponse = ErrorResponse(errorReason, request.requestURL.toString())
 
-        return ResponseEntity.status(HttpStatus.valueOf(errorReason.getStatus())).body<ErrorResponse?>(errorResponse)
+        return ResponseEntity.status(HttpStatus.valueOf(errorReason.status)).body<ErrorResponse>(errorResponse)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
@@ -25,19 +24,19 @@ class CustomExceptionHandler {
         e: MethodArgumentNotValidException,
         request: HttpServletRequest
     ): ResponseEntity<*> {
-        val validationErrors = e.getBindingResult()
-            .getFieldErrors().stream()
-            .map<String?> { obj: FieldError? -> obj!!.getDefaultMessage() }
-            .toList()
+        val validationErrors = e.bindingResult
+            .fieldErrors.mapNotNull { it.defaultMessage }
 
         val errorCode = GlobalErrorCode.INVALID_FIELD_VALUE
         val errorResponse = ErrorResponse(
-            errorCode.getStatus(),
-            errorCode.getCode(),
+            errorCode.status,
+            errorCode.code,
             validationErrors,
-            request.getRequestURL().toString()
+            request.requestURL.toString()
         )
 
-        return ResponseEntity.status(HttpStatus.valueOf(errorCode.getStatus())).body<ErrorResponse?>(errorResponse)
+        return ResponseEntity
+            .status(HttpStatus.valueOf(errorCode.status))
+            .body(errorResponse)
     }
 }

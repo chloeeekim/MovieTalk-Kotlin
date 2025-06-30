@@ -2,6 +2,6 @@ package chloe.movietalk.exception.global
 
 import chloe.movietalk.exception.CustomException
 
-object InvalidRoleEnumValueException : CustomException() {
-    val EXCEPTION: CustomException = InvalidRoleEnumValueException()
+object InvalidRoleEnumValueException : CustomException(GlobalErrorCode.INVALID_ROLE_ENUM_VALUE) {
+    val EXCEPTION: CustomException = this
 }
