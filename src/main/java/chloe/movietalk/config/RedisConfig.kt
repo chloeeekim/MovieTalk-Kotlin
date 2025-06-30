@@ -13,10 +13,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 @Configuration
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 class RedisConfig(
-    @Value("\${spring.data.redis.host}")
+    @param:Value("\${spring.data.redis.host}")
     private val redisHost: String,
 
-    @Value("\${spring.data.redis.port}")
+    @param:Value("\${spring.data.redis.port}")
     private val redisPort: Int
 ) {
     @Bean
