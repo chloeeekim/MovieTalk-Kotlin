@@ -1,32 +1,26 @@
 package chloe.movietalk.auth
 
 import chloe.movietalk.domain.SiteUser
-import lombok.Getter
-import lombok.RequiredArgsConstructor
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-@Getter
-@RequiredArgsConstructor
-class CustomUserDetails : UserDetails {
-    private val user: SiteUser? = null
+class CustomUserDetails(
+    private val user: SiteUser
+) : UserDetails {
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority?> {
+    override fun getAuthorities(): List<SimpleGrantedAuthority> {
         val roles: MutableList<String?> = ArrayList<String?>()
-        roles.add("ROLE_" + user!!.role.toString())
+        roles.add("ROLE_" + user.role.toString())
 
-        return roles.stream()
-            .map<SimpleGrantedAuthority?> { role: String? -> SimpleGrantedAuthority(role) }
-            .toList()
+        return roles.map { SimpleGrantedAuthority(it) }
     }
 
     override fun getPassword(): String {
-        return user!!.passwordHash
+        return user.passwordHash
     }
 
     override fun getUsername(): String? {
-        return user!!.id.toString()
+        return user.id.toString()
     }
 
     override fun isAccountNonExpired(): Boolean {

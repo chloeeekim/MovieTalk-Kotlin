@@ -5,23 +5,21 @@ import io.jsonwebtoken.*
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import io.jsonwebtoken.security.SecurityException
-import lombok.extern.slf4j.Slf4j
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.security.Key
 import java.util.*
 
-@Slf4j
 @Component
 class JwtProvider(
-    @Value("\${jwt.secret}") secretKey: String?,
+    @Value("\${jwt.secret}") secretKey: String,
     @Value("\${jwt.access_expiration_time}") accessTokenExpTime: Long,
     @Value("\${jwt.refresh_expiration_time}") refreshTokenExpTime: Long
 ) {
     private val secretKey: Key
-
     private val accessTokenExpTime: Long
-
     private val refreshTokenExpTime: Long
 
     init {
@@ -31,85 +29,92 @@ class JwtProvider(
         this.refreshTokenExpTime = refreshTokenExpTime
     }
 
-    fun generateAccessToken(user: UserInfo): String? {
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(JwtProvider::class.java)
+    }
+
+    fun generateAccessToken(user: UserInfo): String {
         val now = System.currentTimeMillis()
-        return Jwts.builder()
-            .setHeader(createHeader())
-            .setClaims(createClaims(user))
-            .setSubject(user.id.toString())
-            .setIssuedAt(Date(now))
-            .setExpiration(Date(now + accessTokenExpTime))
-            .signWith(secretKey, SignatureAlgorithm.HS256)
-            .compact()
+        return Jwts.builder().apply {
+            setHeader(createHeader())
+            setClaims(createClaims(user))
+            setSubject(user.id.toString())
+            setIssuedAt(Date(now))
+            setExpiration(Date(now + accessTokenExpTime))
+            signWith(secretKey, SignatureAlgorithm.HS256)
+        }.compact()
     }
 
-    fun generateRefreshToken(userId: UUID): String? {
+    fun generateRefreshToken(userId: UUID): String {
         val now = System.currentTimeMillis()
-        return Jwts.builder()
-            .setHeader(createHeader())
-            .setSubject(userId.toString())
-            .setIssuedAt(Date(now))
-            .setExpiration(Date(now + refreshTokenExpTime))
-            .signWith(secretKey, SignatureAlgorithm.HS256)
-            .compact()
+        return Jwts.builder().apply {
+            setHeader(createHeader())
+            setSubject(userId.toString())
+            setIssuedAt(Date(now))
+            setExpiration(Date(now + refreshTokenExpTime))
+            signWith(secretKey, SignatureAlgorithm.HS256)
+        }.compact()
     }
 
-    fun getUserId(token: String?): UUID {
-        return UUID.fromString(parseClaims(token)!!.getSubject())
+    fun getUserId(token: String): UUID {
+        return UUID.fromString(parseClaims(token).subject)
     }
 
-    fun getExpiration(token: String?): Date? {
-        return parseClaims(token)!!.getExpiration()
+    fun getExpiration(token: String): Date {
+        return parseClaims(token).expiration
     }
 
-    fun parseClaims(token: String?): Claims? {
+    fun parseClaims(token: String): Claims {
         return Jwts.parserBuilder()
             .setSigningKey(secretKey)
             .build()
             .parseClaimsJws(token)
-            .getBody()
+            .body
     }
 
-    fun isTokenExpired(token: String?): Boolean {
+    fun isTokenExpired(token: String): Boolean {
         try {
-            val expirationDate = parseClaims(token)!!.getExpiration()
-            return expirationDate != null && expirationDate.before(Date())
+            return parseClaims(token).expiration?.before(Date())
+                ?: return true
         } catch (e: ExpiredJwtException) {
             return true
         }
     }
 
-    fun isValidToken(token: String?): Boolean {
-        try {
+    fun isValidToken(token: String): Boolean {
+        return try {
             Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token)
-            return true
+            true
         } catch (e: SecurityException) {
-            JwtProvider.log.warn("Invalid JWT signature", e)
+            log.warn("Invalid JWT signature", e)
+            false
         } catch (e: MalformedJwtException) {
-            JwtProvider.log.warn("Invalid JWT token", e)
+            log.warn("Invalid JWT token", e)
+            false
         } catch (e: ExpiredJwtException) {
-            JwtProvider.log.warn("Expired JWT", e)
+            log.warn("Expired JWT", e)
+            false
         } catch (e: UnsupportedJwtException) {
-            JwtProvider.log.warn("Unsupported JWT", e)
+            log.warn("Unsupported JWT", e)
+            false
         } catch (e: IllegalArgumentException) {
-            JwtProvider.log.warn("JWT claims string is empty", e)
+            log.warn("JWT claims string is empty", e)
+            false
         }
-
-        return false
     }
 
-    private fun createHeader(): MutableMap<String?, Any?> {
-        val header: MutableMap<String?, Any?> = HashMap<String?, Any?>()
+    private fun createHeader(): MutableMap<String, Any> {
+        val header: MutableMap<String, Any> = HashMap<String, Any>()
         header.put("typ", "JWT")
         header.put("alg", "HS256")
         return header
     }
 
-    private fun createClaims(user: UserInfo): MutableMap<String?, Any?> {
-        val claims: MutableMap<String?, Any?> = HashMap<String?, Any?>()
+    private fun createClaims(user: UserInfo): MutableMap<String, Any> {
+        val claims: MutableMap<String, Any> = HashMap<String, Any>()
         claims.put("userId", user.id)
         claims.put("email", user.email)
         claims.put("userRole", user.role)
