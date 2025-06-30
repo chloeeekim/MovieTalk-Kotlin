@@ -12,26 +12,26 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
-class RedisConfig {
+class RedisConfig(
     @Value("\${spring.data.redis.host}")
-    private val redisHost: String? = null
+    private val redisHost: String,
 
     @Value("\${spring.data.redis.port}")
-    private val redisPort = 0
-
+    private val redisPort: Int
+) {
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
         return LettuceConnectionFactory(redisHost, redisPort)
     }
 
     @Bean
-    fun redisTemplate(): RedisTemplate<String?, Any?> {
-        val redisTemplate = RedisTemplate<String?, Any?>()
-        redisTemplate.setConnectionFactory(redisConnectionFactory())
-        redisTemplate.setKeySerializer(StringRedisSerializer())
-        redisTemplate.setValueSerializer(StringRedisSerializer())
-        redisTemplate.setHashKeySerializer(StringRedisSerializer())
-        redisTemplate.setHashValueSerializer(StringRedisSerializer())
+    fun redisTemplate(): RedisTemplate<String, Any> {
+        val redisTemplate = RedisTemplate<String, Any>()
+        redisTemplate.connectionFactory = redisConnectionFactory()
+        redisTemplate.keySerializer = StringRedisSerializer()
+        redisTemplate.valueSerializer = StringRedisSerializer()
+        redisTemplate.hashKeySerializer = StringRedisSerializer()
+        redisTemplate.hashValueSerializer = StringRedisSerializer()
         return redisTemplate
     }
 }
