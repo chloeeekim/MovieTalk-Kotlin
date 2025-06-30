@@ -31,13 +31,10 @@ interface DirectorController {
         )]
     )
     fun getAllDirectors(
-        @Parameter(name = "pageable", description = "페이지네이션 옵션") @PageableDefault(
-            page = 0,
-            size = 10,
-            sort = ["createdAt"],
-            direction = Sort.Direction.ASC
-        ) pageable: Pageable?
-    ): ResponseEntity<Page<DirectorInfoResponse?>?>?
+        @Parameter(name = "pageable", description = "페이지네이션 옵션")
+        @PageableDefault(page = 0, size = 10, sort = ["createdAt"], direction = Sort.Direction.ASC)
+        pageable: Pageable
+    ): ResponseEntity<Page<DirectorInfoResponse>>
 
     @GetMapping("/{id}")
     @Operation(summary = "Get director by ID", description = "감독 ID로 특정 감독의 상세 정보를 조회합니다.")
@@ -53,8 +50,9 @@ interface DirectorController {
         )]
     )
     fun getDirectorById(
-        @Parameter(name = "id", description = "감독 ID", required = true) @PathVariable id: UUID?
-    ): ResponseEntity<DirectorDetailResponse?>?
+        @Parameter(name = "id", description = "감독 ID", required = true)
+        @PathVariable id: UUID
+    ): ResponseEntity<DirectorDetailResponse>
 
     @GetMapping("/search")
     @Operation(summary = "Search directors by keyword", description = "감독 이름에 키워드가 포함된 감독 목록을 검색합니다.")
@@ -66,15 +64,13 @@ interface DirectorController {
         )]
     )
     fun searchDirectors(
-        @Parameter(name = "keyword", description = "검색할 키워드") @RequestParam keyword: String?,
+        @Parameter(name = "keyword", description = "검색할 키워드")
+        @RequestParam keyword: String,
 
-        @Parameter(name = "pageable", description = "페이지네이션 옵션") @PageableDefault(
-            page = 0,
-            size = 10,
-            sort = ["createdAt"],
-            direction = Sort.Direction.ASC
-        ) pageable: Pageable?
-    ): ResponseEntity<Page<DirectorInfoResponse?>?>?
+        @Parameter(name = "pageable", description = "페이지네이션 옵션")
+        @PageableDefault(page = 0, size = 10, sort = ["createdAt"], direction = Sort.Direction.ASC)
+        pageable: Pageable
+    ): ResponseEntity<Page<DirectorInfoResponse>>
 
     @PostMapping
     @Operation(summary = "Create new director", description = "새로운 감독을 등록합니다.")
@@ -86,8 +82,9 @@ interface DirectorController {
         )]
     )
     fun createDirector(
-        @Schema(implementation = DirectorRequest::class) @RequestBody request: @Valid DirectorRequest?
-    ): ResponseEntity<DirectorInfoResponse?>?
+        @Schema(implementation = DirectorRequest::class)
+        @RequestBody request: @Valid DirectorRequest
+    ): ResponseEntity<DirectorInfoResponse>
 
     @PutMapping("/{id}")
     @Operation(summary = "Update director by ID", description = "감독 ID로 기존 감독 정보를 수정합니다.")
@@ -103,10 +100,12 @@ interface DirectorController {
         )]
     )
     fun updateDirector(
-        @Parameter(name = "id", description = "감독 ID", required = true) @PathVariable id: UUID?,
+        @Parameter(name = "id", description = "감독 ID", required = true)
+        @PathVariable id: UUID,
 
-        @Schema(implementation = DirectorRequest::class) @RequestBody request: @Valid DirectorRequest?
-    ): ResponseEntity<DirectorInfoResponse?>?
+        @Schema(implementation = DirectorRequest::class)
+        @RequestBody request: @Valid DirectorRequest
+    ): ResponseEntity<DirectorInfoResponse>
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete director by ID", description = "감독 ID로 기존 감독 정보를 삭제합니다.")
@@ -122,8 +121,9 @@ interface DirectorController {
         )]
     )
     fun deleteDirector(
-        @Parameter(name = "id", description = "감독 ID", required = true) @PathVariable id: UUID?
-    ): ResponseEntity<Void?>?
+        @Parameter(name = "id", description = "감독 ID", required = true)
+        @PathVariable id: UUID
+    ): ResponseEntity<Void>
 
     @PostMapping("/{id}/filmography")
     @Operation(summary = "Update director's filmography by ID", description = "감독 ID로 해당 감독의 필모그라피를 수정합니다.")
@@ -139,11 +139,12 @@ interface DirectorController {
         )]
     )
     fun updateDirectorFilmography(
-        @Parameter(name = "id", description = "감독 ID", required = true) @PathVariable id: UUID?,
+        @Parameter(name = "id", description = "감독 ID", required = true)
+        @PathVariable id: UUID,
 
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "새로운 필모그라피로 설정할 영화 ID 리스트",
             content = [Content(array = ArraySchema(schema = Schema(implementation = Long::class)))]
-        ) @RequestBody filmography: MutableList<UUID?>?
-    ): ResponseEntity<DirectorDetailResponse?>?
+        ) @RequestBody filmography: List<UUID>
+    ): ResponseEntity<DirectorDetailResponse>
 }

@@ -32,8 +32,9 @@ interface UserController {
         )]
     )
     fun signup(
-        @Schema(implementation = SignupRequest::class) @RequestBody request: @Valid SignupRequest?
-    ): ResponseEntity<UserInfoResponse?>?
+        @Schema(implementation = SignupRequest::class)
+        @RequestBody request: @Valid SignupRequest
+    ): ResponseEntity<UserInfoResponse>
 
     @PostMapping("/login")
     @Operation(summary = "Log in", description = "로그인을 시도합니다.")
@@ -53,11 +54,12 @@ interface UserController {
         )]
     )
     fun login(
-        @Schema(implementation = LoginRequest::class) @RequestBody loginRequest: @Valid LoginRequest?,
+        @Schema(implementation = LoginRequest::class)
+        @RequestBody loginRequest: @Valid LoginRequest,
 
-        request: HttpServletRequest?,
-        response: HttpServletResponse?
-    ): ResponseEntity<UserInfoResponse?>?
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ): ResponseEntity<UserInfoResponse>
 
     @PostMapping("/refresh")
     @Operation(summary = "Refresh access token", description = "Access Token을 새로 발급합니다.")
@@ -77,9 +79,9 @@ interface UserController {
         )]
     )
     fun refresh(
-        request: HttpServletRequest?,
-        response: HttpServletResponse?
-    ): ResponseEntity<Void?>?
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ): ResponseEntity<Void>
 
     @PostMapping("/logout")
     @Operation(summary = "Log out", description = "로그아웃을 진행합니다.")
@@ -95,6 +97,6 @@ interface UserController {
         )]
     )
     fun logout(
-        request: HttpServletRequest?
-    ): ResponseEntity<Void?>?
+        request: HttpServletRequest
+    ): ResponseEntity<Void>
 }

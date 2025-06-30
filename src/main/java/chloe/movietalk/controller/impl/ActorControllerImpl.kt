@@ -15,54 +15,53 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/actors")
 @Tag(name = "Actor", description = "Actor APIs - 배우 목록 조회, 생성, 수정, 삭제 및 필모그라피 갱신 기능 제공")
-class ActorControllerImpl : ActorController {
-    private val actorService: ActorService? = null
+class ActorControllerImpl(
+    private val actorService: ActorService
+) : ActorController {
 
     @GetMapping
-    override fun getAllActors(pageable: Pageable): ResponseEntity<Page<ActorInfoResponse?>?> {
-        val actors: Page<ActorInfoResponse?> = actorService!!.getAllActors(pageable)
-        return ResponseEntity.ok().body<Page<ActorInfoResponse?>?>(actors)
+    override fun getAllActors(pageable: Pageable): ResponseEntity<Page<ActorInfoResponse>> {
+        val actors = actorService.getAllActors(pageable)
+        return ResponseEntity.ok(actors)
     }
 
     @GetMapping("/{id}")
-    override fun getActorById(id: UUID): ResponseEntity<ActorDetailResponse?> {
-        val actor = actorService!!.getActorById(id)
-        return ResponseEntity.ok().body<ActorDetailResponse?>(actor)
+    override fun getActorById(id: UUID): ResponseEntity<ActorDetailResponse> {
+        val actor = actorService.getActorById(id)
+        return ResponseEntity.ok(actor)
     }
 
     @GetMapping("/search")
-    override fun searchActors(keyword: String, pageable: Pageable): ResponseEntity<Page<ActorInfoResponse?>?> {
-        val actors: Page<ActorInfoResponse?> = actorService!!.searchActor(keyword, pageable)
-        return ResponseEntity.ok().body<Page<ActorInfoResponse?>?>(actors)
+    override fun searchActors(keyword: String, pageable: Pageable): ResponseEntity<Page<ActorInfoResponse>> {
+        val actors = actorService.searchActor(keyword, pageable)
+        return ResponseEntity.ok(actors)
     }
 
     @PostMapping
-    override fun createActor(request: ActorRequest): ResponseEntity<ActorInfoResponse?> {
-        val actor = actorService!!.createActor(request)
-        return ResponseEntity.status(HttpStatus.CREATED).body<ActorInfoResponse?>(actor)
+    override fun createActor(request: ActorRequest): ResponseEntity<ActorInfoResponse> {
+        val actor = actorService.createActor(request)
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(actor)
     }
 
     @PutMapping("/{id}")
-    override fun updateActor(id: UUID, request: ActorRequest): ResponseEntity<ActorInfoResponse?> {
-        val actor = actorService!!.updateActor(id, request)
-        return ResponseEntity.ok().body<ActorInfoResponse?>(actor)
+    override fun updateActor(id: UUID, request: ActorRequest): ResponseEntity<ActorInfoResponse> {
+        val actor = actorService.updateActor(id, request)
+        return ResponseEntity.ok(actor)
     }
 
     @DeleteMapping("/{id}")
-    override fun deleteActor(id: UUID): ResponseEntity<Void?> {
-        actorService!!.deleteActor(id)
-        return ResponseEntity.noContent().build<Void?>()
+    override fun deleteActor(id: UUID): ResponseEntity<Void> {
+        actorService.deleteActor(id)
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/{id}/filmography")
-    override fun updateActorFilmography(
-        id: UUID,
-        filmography: MutableList<UUID?>
-    ): ResponseEntity<ActorDetailResponse?> {
-        val actor = actorService!!.updateActorFilmography(id, filmography)
-        return ResponseEntity.ok().body<ActorDetailResponse?>(actor)
+    override fun updateActorFilmography(id: UUID, filmography: List<UUID>): ResponseEntity<ActorDetailResponse> {
+        val actor = actorService.updateActorFilmography(id, filmography)
+        return ResponseEntity.ok(actor)
     }
 }

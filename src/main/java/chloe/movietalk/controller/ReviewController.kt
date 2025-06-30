@@ -37,8 +37,9 @@ interface ReviewController {
         )]
     )
     fun createReview(
-        @Schema(implementation = CreateReviewRequest::class) @RequestBody request: @Valid CreateReviewRequest?
-    ): ResponseEntity<ReviewDetailResponse?>?
+        @Schema(implementation = CreateReviewRequest::class)
+        @RequestBody request: @Valid CreateReviewRequest
+    ): ResponseEntity<ReviewDetailResponse>
 
     @PutMapping("/{id}")
     @Operation(summary = "Update review by ID", description = "리뷰 ID로 기존 리뷰 정보를 수정합니다.")
@@ -54,10 +55,12 @@ interface ReviewController {
         )]
     )
     fun updateReview(
-        @Parameter(name = "id", description = "리뷰 ID", required = true) @PathVariable id: UUID?,
+        @Parameter(name = "id", description = "리뷰 ID", required = true)
+        @PathVariable id: UUID,
 
-        @Schema(implementation = UpdateReviewRequest::class) @RequestBody request: @Valid UpdateReviewRequest?
-    ): ResponseEntity<ReviewDetailResponse?>?
+        @Schema(implementation = UpdateReviewRequest::class)
+        @RequestBody request: @Valid UpdateReviewRequest
+    ): ResponseEntity<ReviewDetailResponse>
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete review by ID", description = "리뷰 ID로 기존 리뷰 정보를 삭제합니다.")
@@ -73,8 +76,9 @@ interface ReviewController {
         )]
     )
     fun deleteReview(
-        @Parameter(name = "id", description = "리뷰 ID", required = true) @PathVariable id: UUID?
-    ): ResponseEntity<Void?>?
+        @Parameter(name = "id", description = "리뷰 ID", required = true)
+        @PathVariable id: UUID
+    ): ResponseEntity<Void>
 
     @GetMapping("/movies/{id}")
     @Operation(summary = "Get all review lists list by movie id", description = "영화 ID가 일치하는 리뷰 목록을 조회합니다.")
@@ -90,15 +94,13 @@ interface ReviewController {
         )]
     )
     fun getAllReviewsByMovie(
-        @Parameter(name = "id", description = "영화 ID", required = true) @PathVariable id: UUID?,
+        @Parameter(name = "id", description = "영화 ID", required = true)
+        @PathVariable id: UUID,
 
-        @Parameter(name = "pageable", description = "페이지네이션 옵션") @PageableDefault(
-            page = 0,
-            size = 10,
-            sort = ["createdAt"],
-            direction = Sort.Direction.ASC
-        ) pageable: Pageable?
-    ): ResponseEntity<Page<ReviewByMovieResponse?>?>?
+        @Parameter(name = "pageable", description = "페이지네이션 옵션")
+        @PageableDefault(page = 0, size = 10, sort = ["createdAt"], direction = Sort.Direction.ASC)
+        pageable: Pageable
+    ): ResponseEntity<Page<ReviewByMovieResponse>>
 
     @GetMapping("/users/{id}")
     @Operation(summary = "Get all review lists list by user id", description = "사용자 ID가 일치하는 리뷰 목록을 조회합니다.")
@@ -114,16 +116,13 @@ interface ReviewController {
         )]
     )
     fun getAllReviewsByUser(
-        @Parameter(name = "id", description = "사용자 ID", required = true) @PathVariable id: UUID?,
+        @Parameter(name = "id", description = "사용자 ID", required = true)
+        @PathVariable id: UUID,
 
-        @Parameter(name = "pageable", description = "페이지네이션 옵션") @PageableDefault(
-            page = 0,
-            size = 10,
-            sort = ["createdAt"],
-            direction = Sort.Direction.ASC
-        ) pageable: Pageable?
-    ): ResponseEntity<Page<ReviewByUserResponse?>?>?
-
+        @Parameter(name = "pageable", description = "페이지네이션 옵션")
+        @PageableDefault(page = 0, size = 10, sort = ["createdAt"], direction = Sort.Direction.ASC)
+        pageable: Pageable
+    ): ResponseEntity<Page<ReviewByUserResponse>>
 
     @PostMapping("/{id}/like")
     @Operation(summary = "Like review", description = "사용자가 리뷰에 좋아요를 표시합니다.")
@@ -143,10 +142,12 @@ interface ReviewController {
         )]
     )
     fun likeReview(
-        @Parameter(name = "id", description = "리뷰 ID", required = true) @PathVariable id: UUID?,
+        @Parameter(name = "id", description = "리뷰 ID", required = true)
+        @PathVariable id: UUID,
 
-        @Parameter(name = "userId", description = "사용자 ID", required = true) @RequestParam userId: UUID?
-    ): ResponseEntity<Void?>?
+        @Parameter(name = "userId", description = "사용자 ID", required = true)
+        @RequestParam userId: UUID
+    ): ResponseEntity<Void>
 
     @DeleteMapping("/{id}/like")
     @Operation(summary = "Unlike review", description = "사용자가 리뷰 좋아요를 취소합니다.")
@@ -162,8 +163,10 @@ interface ReviewController {
         )]
     )
     fun unlikeReview(
-        @Parameter(name = "id", description = "리뷰 ID", required = true) @PathVariable id: UUID?,
+        @Parameter(name = "id", description = "리뷰 ID", required = true)
+        @PathVariable id: UUID,
 
-        @Parameter(name = "userID", description = "사용자 ID", required = true) @RequestParam userId: UUID?
-    ): ResponseEntity<Void?>?
+        @Parameter(name = "userID", description = "사용자 ID", required = true)
+        @RequestParam userId: UUID
+    ): ResponseEntity<Void>
 }

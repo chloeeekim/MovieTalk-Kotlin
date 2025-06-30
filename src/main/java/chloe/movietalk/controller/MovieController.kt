@@ -32,13 +32,10 @@ interface MovieController {
         )]
     )
     fun getAllMovies(
-        @Parameter(name = "pageable", description = "페이지네이션 옵션") @PageableDefault(
-            page = 0,
-            size = 10,
-            sort = ["createdAt"],
-            direction = Sort.Direction.ASC
-        ) pageable: Pageable?
-    ): ResponseEntity<Page<MovieInfoResponse?>?>?
+        @Parameter(name = "pageable", description = "페이지네이션 옵션")
+        @PageableDefault(page = 0, size = 10, sort = ["createdAt"], direction = Sort.Direction.ASC)
+        pageable: Pageable
+    ): ResponseEntity<Page<MovieInfoResponse>>
 
     @GetMapping("/{id}")
     @Operation(summary = "Get movie by ID", description = "영화 ID로 특정 영화의 상세 정보를 조회합니다.")
@@ -54,8 +51,9 @@ interface MovieController {
         )]
     )
     fun getMovieById(
-        @Parameter(name = "id", description = "영화 ID", required = true) @PathVariable id: UUID?
-    ): ResponseEntity<MovieDetailResponse?>?
+        @Parameter(name = "id", description = "영화 ID", required = true)
+        @PathVariable id: UUID
+    ): ResponseEntity<MovieDetailResponse>
 
     @GetMapping("/search")
     @Operation(summary = "Search movies by keyword", description = "영화 제목에 키워드가 포함된 영화 목록을 검색합니다.")
@@ -67,15 +65,13 @@ interface MovieController {
         )]
     )
     fun searchMovies(
-        @Parameter(name = "keyword", description = "검색할 키워드") @RequestParam keyword: String?,
+        @Parameter(name = "keyword", description = "검색할 키워드")
+        @RequestParam keyword: String,
 
-        @Parameter(name = "pageable", description = "페이지네이션 옵션") @PageableDefault(
-            page = 0,
-            size = 10,
-            sort = ["createdAt"],
-            direction = Sort.Direction.ASC
-        ) pageable: Pageable?
-    ): ResponseEntity<Page<MovieInfoResponse?>?>?
+        @Parameter(name = "pageable", description = "페이지네이션 옵션")
+        @PageableDefault(page = 0, size = 10, sort = ["createdAt"], direction = Sort.Direction.ASC)
+        pageable: Pageable
+    ): ResponseEntity<Page<MovieInfoResponse>>
 
     @PostMapping
     @Operation(summary = "Create new movie", description = "새로운 영화를 등록합니다.")
@@ -91,8 +87,9 @@ interface MovieController {
         )]
     )
     fun createMovie(
-        @Schema(implementation = MovieRequest::class) @RequestBody request: @Valid MovieRequest?
-    ): ResponseEntity<MovieInfoResponse?>?
+        @Schema(implementation = MovieRequest::class)
+        @RequestBody request: @Valid MovieRequest
+    ): ResponseEntity<MovieInfoResponse>
 
     @PutMapping("/{id}")
     @Operation(summary = "Update movie by ID", description = "영화 ID로 기존 영화 정보를 수정합니다.")
@@ -108,10 +105,12 @@ interface MovieController {
         )]
     )
     fun updateMovie(
-        @Parameter(name = "id", description = "영화 ID", required = true) @PathVariable id: UUID?,
+        @Parameter(name = "id", description = "영화 ID", required = true)
+        @PathVariable id: UUID,
 
-        @Schema(implementation = MovieRequest::class) @RequestBody request: @Valid MovieRequest?
-    ): ResponseEntity<MovieInfoResponse?>?
+        @Schema(implementation = MovieRequest::class)
+        @RequestBody request: @Valid MovieRequest
+    ): ResponseEntity<MovieInfoResponse>
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete movie by ID", description = "영화 ID로 기존 영화 정보를 삭제합니다.")
@@ -127,8 +126,9 @@ interface MovieController {
         )]
     )
     fun deleteMovie(
-        @Parameter(name = "id", description = "영화 ID", required = true) @PathVariable id: UUID?
-    ): ResponseEntity<Void?>?
+        @Parameter(name = "id", description = "영화 ID", required = true)
+        @PathVariable id: UUID
+    ): ResponseEntity<Void>
 
     @PostMapping("/{id}/actors")
     @Operation(summary = "Update movie's actors list by ID", description = "영화 ID로 해당 영화의 배우 목록을 수정합니다.")
@@ -144,13 +144,14 @@ interface MovieController {
         )]
     )
     fun updateMovieActors(
-        @Parameter(name = "id", description = "영화 ID", required = true) @PathVariable id: UUID?,
+        @Parameter(name = "id", description = "영화 ID", required = true)
+        @PathVariable id: UUID,
 
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "새로운 배우 목록으로 설정할 배우 ID 리스트",
             content = [Content(array = ArraySchema(schema = Schema(implementation = Long::class)))]
-        ) @RequestBody actorIds: MutableList<UUID?>?
-    ): ResponseEntity<UpdateMovieResponse?>?
+        ) @RequestBody actorIds: List<UUID>
+    ): ResponseEntity<UpdateMovieResponse>
 
     @PostMapping("/{id}/director")
     @Operation(summary = "Update movie's director by ID", description = "영화 ID로 해당 영화의 감독을 수정합니다.")
@@ -166,11 +167,12 @@ interface MovieController {
         )]
     )
     fun updateMovieDirector(
-        @Parameter(name = "id", description = "영화 ID", required = true) @PathVariable id: UUID?,
+        @Parameter(name = "id", description = "영화 ID", required = true)
+        @PathVariable id: UUID,
 
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "새로운 배우 목록으로 설정할 배우 ID 리스트",
             content = [Content(schema = Schema(implementation = Long::class))]
-        ) @RequestBody directorId: UUID?
-    ): ResponseEntity<UpdateMovieResponse?>?
+        ) @RequestBody directorId: UUID
+    ): ResponseEntity<UpdateMovieResponse>
 }
